@@ -99,13 +99,8 @@ public class UserInfoController {
      */
     @ResponseBody
     @RequestMapping(value = "/admin_login",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
-    public String submitCategory(@RequestBody AdminLoginDto adminLoginDto, HttpServletRequest  request) {
-        if(adminLoginDto.getAccount().equals(Constants.ADMIN_ACCOUNT)&&adminLoginDto.getPassword().equals(Constants.ADMIN_PASSWORD)){
-            request.getSession().setAttribute("login", true);
-            return "1";
-        }else {
-            return "0";
-        }
+    public JsonResponseDto adminLogin(@RequestBody AdminLoginDto adminLoginDto, HttpServletRequest  request) {
+        return iUserInfoService.adminLogin(adminLoginDto,request);
     }
 
     /**

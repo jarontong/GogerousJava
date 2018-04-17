@@ -50,7 +50,13 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/ServiceController.html" />
-            <bean class="utils.MyInterceptor"></bean>
+            <bean class="utils.JavaServiceCheckInterceptor"></bean>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/picture/*" />
+            <mvc:exclude-mapping path="/user_info/admin_login"/>
+            <mvc:exclude-mapping path="/ServiceLogin.html" />
+            <bean class="utils.AndroidServiceCheckInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
 </beans>

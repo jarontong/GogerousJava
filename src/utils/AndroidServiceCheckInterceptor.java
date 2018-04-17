@@ -7,10 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-public class MyInterceptor implements HandlerInterceptor {
+public class AndroidServiceCheckInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         //此判断需完善
+        System.out.println("客户端token验证");
         if(httpServletRequest.getSession().getAttribute("login")!=null){
             return true;
         }

@@ -1,5 +1,6 @@
 package service;
 
+import dto.AdminLoginDto;
 import dto.JsonResponseDto;
 import dto.PageDto;
 import dto.UserInfoDto;
@@ -29,5 +30,7 @@ public interface IUserInfoService {
     JsonResponseDto upupdateUserInfo(UserInfoDto userInfoDto);
 
     int queryUserCount();
+
+    JsonResponseDto adminLogin(AdminLoginDto adminLoginDto, HttpServletRequest  request);
 
 }

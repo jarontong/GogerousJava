@@ -50,10 +50,10 @@
                 contentType : "application/json;charset=UTF-8",
                 type:'post',
                 success:function (data) {
-                    if (data == "1"){
+                    if (data.statueCode == "200"){
                         　window.location.href="ServiceController.html";
                     }else{
-                        layer.msg('登录名或密码错误');
+                        layer.msg(data.message);
                     }
                 }
             })

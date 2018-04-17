@@ -1,5 +1,6 @@
 package service;
 
+import dto.AdminLoginDto;
 import dto.JsonResponseDto;
 import dto.PageDto;
 import dto.UserInfoDto;
@@ -182,5 +183,15 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public int queryUserCount() {
         return iUserInfoMapper.queryUserCount();
+    }
+
+    @Override
+    public JsonResponseDto adminLogin(AdminLoginDto adminLoginDto, HttpServletRequest request) {
+        if(adminLoginDto.getAccount().equals(Constants.ADMIN_ACCOUNT)&&adminLoginDto.getPassword().equals(Constants.ADMIN_PASSWORD)){
+            request.getSession().setAttribute("admin_login", true);
+            return new JsonResponseDto(STATUE_OK, "登录成功", "1");
+        }else {
+            return new JsonResponseDto(STATUE_FAIL, "用户或密码错误", "0");
+        }
     }
 }
