@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.IPostPictureInfoMapper">
+    <select id="queryPostPictureList" resultType="PostPictureInfoDto">
+        select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,account from  post_picture_info as a inner join user_info on a.user_id=user_info.id
+    </select>
+
+    <insert id="postPicture"   parameterType="PostPictureInfoDto" useGeneratedKeys="true" keyProperty="id" >
+        insert into post_picture_info (view_num,like_num,cover,post_time,is_hot,post_type,user_id) values
+         (#{viewNum},#{likeNum},#{cover},#{postTime},#{isHot},#{postType},#{userId})
+    </insert>
+
+    <select id="queryPostPictureCount" resultType="int">
+        select count(*) from   post_picture_info
+    </select>
+
+    <select id="queryPostPictureListByPage" resultType="PostPictureInfoDto">
+        (select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,account from  post_picture_info as a inner join user_info on a.user_id=user_info.id) ORDER BY is_hot DESC,post_time DESC
+        <if test="start!=null and count!=null">
+            limit #{start},#{count}
+        </if>
+    </select>
+
+    <select id="queryPostPictureById" parameterType="int" resultType="PostPictureInfoDto">
+        select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,account from  post_picture_info as a inner join user_info on a.user_id=user_info.id  where a.id= #{postPictureId}
+    </select>
+
+
+    <update id="updatePostPictureInfo" parameterType="PostPictureInfoDto" >
+        UPDATE post_picture_info
+        <set>
+            <if test="viewNum!=null">
+                post_picture_info.view_num=#{viewNum},
+            </if>
+            <if test="likeNum!=null">
+                post_picture_info.like_num=#{likeNum},
+            </if>
+            <if test="cover!=null">
+                post_picture_info.cover=#{cover},
+            </if>
+            <if test="isHot!=null">
+                post_picture_info.is_hot=#{isHot},
+            </if>
+            <if test="postTime!=null">
+                post_picture_info.post_time=#{postTime}
+            </if>
+            <if test="postType!=null">
+                post_picture_info.post_Type=#{postType}
+            </if>
+        </set>
+        where post_picture_info.id = #{id}
+    </update>
+
+    <delete id="deletePostPicture" parameterType="int">
+       DELETE FROM post_picture_info WHERE id=#{postPictureId}
+    </delete>
+</mapper>

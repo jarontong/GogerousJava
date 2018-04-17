@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Gogerous:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/Gogerous_war</output-path>
+    <root id="archive" name="Gogerous_war.war">
+      <element id="artifact" artifact-name="Gogerous:war exploded" />
+      <element id="dir-copy" path="$PROJECT_DIR$/web" />
+      <element id="dir-copy" path="$PROJECT_DIR$/web/layui" />
+    </root>
+  </artifact>
+</component>

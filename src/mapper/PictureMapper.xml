@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.IPictureMapper">
+    <insert id="postPicture"   parameterType="PictureDto"  keyProperty="id" >
+        insert into picture_info (post_picture_info_id,sort,picture_address) values
+        (#{postPictureInfoId},#{sort},#{pictureAddress})
+</insert>
+
+    <select id="queryPostPictureByPostId" parameterType="int" resultType="PictureDto">
+       SELECT * FROM  picture_info WHERE picture_info.post_picture_info_id=#{postId} ORDER BY sort ASC
+    </select>
+
+
+    <!--<update id="updatePostPictureInfo" parameterType="PictureDto" >-->
+        <!--UPDATE post_picture_info-->
+        <!--<set>-->
+            <!--<if test="sort!=null">-->
+                <!--post_picture_info.sort=#{sort},-->
+            <!--</if>-->
+            <!--<if test="pictureAddress!=null">-->
+                <!--user_info.picture_address=#{pictureAddress}-->
+            <!--</if>-->
+        <!--</set>-->
+        <!--where post_picture_info.id = #{id}-->
+    <!--</update>-->
+
+    <delete id="deletePicture" parameterType="int">
+       DELETE FROM picture_info WHERE id=#{pictureId}
+    </delete>
+
+
+    <insert id="updatePostPictureInfo" parameterType="PictureDto" >
+        INSERT INTO picture_info (id,sort,post_picture_info_id,picture_address) VALUES (#{id},#{sort},#{postPictureInfoId},#{pictureAddress})  ON DUPLICATE KEY UPDATE sort=#{sort},picture_address=#{pictureAddress};
+    </insert>
+</mapper>

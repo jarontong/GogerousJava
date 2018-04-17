@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GG后台登录</title>
+    <link rel="stylesheet" href="http://www.chennaicha.club/gogerous/layui/css/layui.css">
+    <script src="http://www.chennaicha.club/gogerous/layui/layui.js"></script>
+</head>
+<body bgcolor="#f0f8ff">
+    <div style="background: white;width: 800px;height: 500px;margin: 0px auto;margin-top: 80px;text-align: center">
+        <a style="line-height: 200px;font-size: large;color: #0C0C0C">GG后台管理登录</a>
+        <form class="layui-form" method="post" action=""  >
+            <div class="layui-form-item" style="position: relative;left: 200px">
+                <label class="layui-form-label">账号:</label>
+                <div class="layui-input-inline">
+                    <input id="account" type="text" name="account" required  lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="position: relative;left: 200px">
+                <label class="layui-form-label">密码:</label>
+                <div class="layui-input-inline">
+                    <input id="password" type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="position: relative;left: -50px">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">登录</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+
+</body>
+
+
+<script>
+    layui.use(['form','layer','jquery'], function () {
+
+        // 操作对象
+        var form = layui.form;
+        var $ = layui.jquery;
+        form.on('submit(formDemo)',function (data) {
+            $.ajax({
+                url:'user_info/admin_login',
+                data:JSON.stringify(data.field),
+                dataType:"json",
+                contentType : "application/json;charset=UTF-8",
+                type:'post',
+                success:function (data) {
+                    if (data == "1"){
+                        　window.location.href="ServiceController.html";
+                    }else{
+                        layer.msg('登录名或密码错误');
+                    }
+                }
+            })
+            return false;
+        })
+
+    });
+</script>
+</html>

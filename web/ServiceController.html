@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>GG后台管理</title>
+    <link rel="stylesheet" href="http://www.chennaicha.club/gogerous/layui/css/layui.css">
+    <script src="http://www.chennaicha.club/gogerous/layui/layui.js"></script>
+    <script type="text/javascript" src="http://www.chennaicha.club/gogerous/jquery.min.js"></script>
+    <script src="http://www.chennaicha.club/gogerous/jquery.md5.js"></script>
+
+</head>
+<body>
+<div style="width:200px;height:100%;position:fixed;background: #393D49;text-align: center">
+    <h2 style="color: white;line-height: 100px">GG后台管理</h2>
+    <ul class="layui-nav layui-nav-tree " lay-filter="test">
+        <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
+        <li class="layui-nav-item ">
+            <a href="javascript:;">GG用户管理</a>
+            <dl class="layui-nav-child">
+                <dd><a href="javascript:showUserList()" ;>用户列表</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item">
+            <a href="javascript:;">GG套图管理</a>
+            <dl class="layui-nav-child">
+                <dd><a href="javascript:showPictureList()">套图发布信息</a></dd>
+            </dl>
+        </li>
+    </ul>
+</div>
+<div style="margin-left: 200px;width: 100%;height: 100%;position:fixed;background: white;text-align: center">
+    <div style="margin-top:100px;width: 90%;height: 100%;position:fixed;background: #eeeeee;text-align: center">
+        <!--用户信息列表面板-->
+        <div id="userInfoDiv"
+             style="display:none;margin:50px;width: 85%;height: 100%;position:fixed;background: white;">
+            <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">GG用户列表</p>
+            <button onclick="resgiter()" class="layui-btn">添加用户</button>
+            <table class="layui-table" lay-skin="line" id="userTableList">
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th style="text-align: center">id</th>
+                    <th style="text-align: center">账号</th>
+                    <th style="text-align: center">昵称</th>
+                    <th style="text-align: center">性别</th>
+                    <th style="text-align: center">关注数</th>
+                    <th style="text-align: center">粉丝数</th>
+                    <th style="text-align: center">操作</th>
+                </tr>
+                </thead>
+                </tbody>
+            </table>
+            <div>
+                <button id="btn_page_pre" class="layui-btn  layui-btn-xs">上一页</button>
+                <a id="page_num" style="margin: 10px">1</a>
+                <button id="btn_page_next" class="layui-btn  layui-btn-xs">下一页</button>
+            </div>
+        </div>
+        <!--用户注册面板-->
+        <div id="registerEditDiv"
+             style="display:none;overflow:scroll;margin:50px;width: 85%;height: 800px;position:fixed;background: white;text-align: left">
+            <button style="margin-left: 50px;margin-top: 50px" onclick="registerReturn()"
+                    class="layui-btn  layui-btn-sm layui-btn-primary">
+                <i class="layui-icon">&#xe65c;</i>
+            </button>
+            <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">用户注册</p>
+            <form class="layui-form" action="" style="margin-top: 50px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">用户账号</label>
+                    <div class="layui-input-inline">
+                        <input id="register_edit_account" type="text" name="account" required lay-verify="required"
+                               placeholder="请输入账号"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">用户密码</label>
+                    <div class="layui-input-inline">
+                        <input id="register_edit_password" type="password" name="pd" required lay-verify="required"
+                               placeholder="请输入密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">确认密码</label>
+                    <div class="layui-input-inline">
+                        <input id="register_edit_passworda" type="password" name="pda" required lay-verify="required"
+                               placeholder="请输入密码"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">用户头像</label>
+                    <div class="layui-input-block">
+                        <img id="register_edit_avatar" alt="用户头像" src="splash.jpg" name="user_avatar" width="100"
+                             type="">
+                        <button type="button" style="margin-left: 50px"
+                                class="layui-btn layui-btn-primary  layui-btn-sm" id="registerAvatar">
+                            选择文件
+                        </button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">昵称</label>
+                    <div class="layui-input-inline">
+                        <input id="register_edit_nickname" type="text" name="nickname"
+                               placeholder="请输入昵称"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <input id="register_edit_gender_male" type="radio" name="gender" value="1" title="男">
+                        <input id="register_eidt_gender_femal" type="radio" name="gender" value="0" title="女">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">签名</label>
+                    <div class="layui-input-block">
+                        <textarea id="register_edit_sgin" name="sign" placeholder="默认签名"
+                                  class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formRegister">添加</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <!--用户信息编辑面板-->
+        <div id="userInfoEditDiv"
+             style="display:none;margin:50px;width: 85%;height: 100%;position:fixed;background: white;text-align: left">
+            <button style="margin-left: 50px;margin-top: 50px" onclick="userEditReturn()"
+                    class="layui-btn  layui-btn-sm layui-btn-primary">
+                <i class="layui-icon">&#xe65c;</i>
+            </button>
+            <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">用户信息编辑</p>
+            <form class="layui-form" action="" style="margin-top: 50px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">用户id</label>
+                    <div class="layui-input-block">
+                        <label class="layui-form-label" name="user_id" id="user_edit_id"
+                               style="color: #d2d2d2">50</label>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">用户账号</label>
+                    <div class="layui-input-block">
+                        <label class="layui-form-label" id="user_edit_account" style="color: #d2d2d2">wmy</label>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">用户头像</label>
+                    <div class="layui-input-block">
+                        <img id="user_edit_avatar" alt="用户头像" src="splash.jpg" name="user_avatar" width="100" type="">
+                        <button type="button" style="margin-left: 50px"
+                                class="layui-btn layui-btn-primary  layui-btn-sm" id="preUpdateAvatar">
+                            选择文件
+                        </button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">昵称</label>
+                    <div class="layui-input-inline">
+                        <input id="user_edit_nickname" type="text" name="nickname" required lay-verify="required"
+                               placeholder="默认昵称"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <input id="user_edit_gender_male" type="radio" name="sex" value="1" title="男">
+                        <input id="user_eidt_gender_femal" type="radio" name="sex" value="0" title="女">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">签名</label>
+                    <div class="layui-input-block">
+                        <textarea id="user_edit_sgin" name="sign" placeholder="默认签名" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">保存</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <!--图片信息发布列表-->
+        <div id="pictureInfoDiv"
+             style="display:none;margin:50px;width: 85%;height: 100%;position:fixed;background: white;text-align: center">
+            <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">
+                GG用户发布图片列表</p>
+            <button onclick="postPicture()" class="layui-btn">发布图片</button>
+            <table class="layui-table" lay-skin="line" id="pictureTableList">
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th style="text-align: center">id</th>
+                    <th style="text-align: center">发布用户id</th>
+                    <th style="text-align: center">发布用户账号</th>
+                    <th style="text-align: center">发布时间</th>
+                    <th style="text-align: center">浏览数</th>
+                    <th style="text-align: center">喜欢数</th>
+                    <th style="text-align: center">类型</th>
+                    <th style="text-align: center">是否热推</th>
+                    <th style="text-align: center">操作</th>
+                </tr>
+                </thead>
+                </tbody>
+            </table>
+            <div>
+                <button id="btn_picture_page_pre" class="layui-btn  layui-btn-xs">上一页</button>
+                <a id="picture_page_num" style="margin: 10px">1</a>
+                <button id="btn_picture_page_next" class="layui-btn  layui-btn-xs">下一页</button>
+            </div>
+        </div>
+        <!--图片信息编辑面板-->
+        <div id="postPictureInfoDiv"
+             style="display:none;overflow:scroll;margin:50px;width: 85%;height: 800px;position:fixed;background: white;text-align: left">
+            <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">发布信息编辑</p>
+            <button style="margin-left: 50px;margin-top: 50px" onclick="postPictureEditReturn()"
+                    class="layui-btn  layui-btn-sm layui-btn-primary">
+                <i class="layui-icon">&#xe65c;</i>
+            </button>
+            <form class="layui-form" action="" style="margin-top: 50px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">发布信息id</label>
+                    <div class="layui-input-block">
+                        <label class="layui-form-label" name="user_id" id="post_picture_edit_id" style="color: #d2d2d2">50</label>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">发布信息用户id</label>
+                    <div class="layui-input-block">
+                        <label class="layui-form-label" name="user_id" id="post_picture_edit_user_id"
+                               style="color: #d2d2d2">50</label>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">发布信息账号</label>
+                    <div class="layui-input-block">
+                        <label class="layui-form-label" id="post_picture_edit_account"
+                               style="color: #d2d2d2">wmy</label>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">套图封面</label>
+                    <div class="layui-input-block">
+                        <img id="post_picture_edit_cover" alt="套图封面" src="splash.jpg" name="user_avatar" width="100"
+                             type="">
+                        <button type="button" style="margin-left: 50px"
+                                class="layui-btn layui-btn-primary  layui-btn-sm" id="postPictureCover">
+                            选择文件
+                        </button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">浏览数</label>
+                    <div class="layui-input-inline">
+                        <input id="post_picture_edit_view_num" type="text" name="viewNum" required lay-verify="required"
+                               placeholder=""
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">热推</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="switch" lay-skin="switch" id="post_picture_edit_hot"
+                               checked="checked">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-inline">
+                        <input id="post_picture_edit_posttype" type="text" name="viewNum" required lay-verify="required"
+                               placeholder=""
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div id="picturesDiv" class="layui-form-item" style="display: block;width: 800px;margin-left: 100px">
+                    <p style="color: #0C0C0C;line-height: 50px;text-align: left;margin-left:60px;font-size: large ">
+                        套图列表</p>
+                    <table class="layui-table" lay-skin="line" id="pictures">
+                        <colgroup>
+                            <col width="180">
+                            <col width="230">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th style="text-align: center">图片id</th>
+                            <th style="text-align: center">图片</th>
+                            <th style="text-align: center">权重</th>
+                            <th style="text-align: center">操作</th>
+                        </tr>
+                        </thead>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="addPictureEdit" class="layui-btn" type="button">添加图片</button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="form_post_picture_edit">保存</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <!--发布套图面板-->
+        <div id="postPictureDiv"
+             style="display:none;overflow:scroll;margin:50px;width: 85%;height: 800px;position:fixed;background: white;text-align: left">
+            <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">发布套图</p>
+            <button style="margin-left: 50px;margin-top: 50px" onclick="postPictureReturn()"
+                    class="layui-btn  layui-btn-sm layui-btn-primary">
+                <i class="layui-icon">&#xe65c;</i>
+            </button>
+            <form class="layui-form" action="" style="margin-top: 50px">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="color: #d2d2d2">用户id</label>
+                    <div class="layui-input-inline">
+                        <input id="post_picture_user_id" type="text" name="user_id" required lay-verify="required"
+                               placeholder=""
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">套图封面</label>
+                    <div class="layui-input-block">
+                        <img id="post_picture_cover" alt="套图封面" src="splash.jpg" name="user_avatar" width="100"
+                             type="">
+                        <button type="button" style="margin-left: 50px"
+                                class="layui-btn layui-btn-primary  layui-btn-sm" id="postPicture">
+                            选择文件
+                        </button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">热推</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="switch" lay-skin="switch" id="post_picture_hot"
+                               checked="checked">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-inline">
+                        <input id="post_picture_type" type="text" name="viewNum"
+                               placeholder=""
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div id="postPicturesDiv" class="layui-form-item" style="display: block;width: 800px;margin-left: 100px">
+                    <p style="color: #0C0C0C;line-height: 50px;text-align: left;margin-left:60px;font-size: large ">
+                        套图列表</p>
+                    <table class="layui-table" lay-skin="line" id="addPictureList">
+                        <colgroup>
+                            <col width="180">
+                            <col width="230">
+                            <col>
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th style="text-align: center">图片</th>
+                            <th style="text-align: center">权重</th>
+                            <th style="text-align: center">操作</th>
+                        </tr>
+                        </thead>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="addPicture" class="layui-btn" type="button">添加图片</button>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="form_post_picture">发布</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="http://www.chennaicha.club/gogerous/layui/layui.js"></script>
+<script src="http://www.chennaicha.club/gogerous/ServiceCtontroller.js"></script>
+</body>
+</html>

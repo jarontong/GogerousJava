@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.IUserInfoMapper">
+    <select id="queryUserList" resultType="UserInfoDto">
+        select * from  user_info ;
+    </select>
+
+    <select id="queryUserCount" resultType="int">
+        select count(*) from   user_info
+    </select>
+
+    <select id="queryUserByAccount" resultType="UserInfoDto">
+        select * from  user_info WHERE user_info.account=#{account};
+    </select>
+
+    <select id="queryUserListByPage" resultType="UserInfoDto">
+        select * from   user_info ORDER BY  id DESC
+        <if test="start!=null and count!=null">
+            limit #{start},#{count}
+        </if>
+    </select>
+
+    <insert id="register"   parameterType="UserInfoDto"  keyProperty="id" >
+        insert into user_info (account,password,nickname) values (#{account},#{password},#{nickname})
+    </insert>
+
+    <select id="login" parameterType="java.util.Map" resultType="UserInfoDto">
+        select * from   user_info  where  user_info.account=#{account} and user_info.password=#{password}
+    </select>
+
+    <select id="queryUserById" parameterType="int" resultType="UserInfoDto">
+        select * from   user_info  where id= #{userId}
+    </select>
+
+    <update id="updateUserInfo" parameterType="UserInfoDto" >
+        UPDATE user_info
+        <set>
+            <if test="password!=null">
+                user_info.password=#{password},
+            </if>
+            <if test="gender!=null">
+                user_info.gender=#{gender},
+            </if>
+            <if test="avatar!=null">
+                user_info.avatar=#{avatar},
+            </if>
+            <if test="nickname!=null">
+                user_info.nickname=#{nickname},
+            </if>
+            <if test="sign!=null">
+                user_info.sign=#{sign}
+            </if>
+        </set>
+        where user_info.id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+       DELETE FROM user_info WHERE id=#{userId}
+    </delete>
+</mapper>
