@@ -261,7 +261,7 @@ layui.use('form', function () {
             userInfoDto.gender = gender;
             userInfoDto.sign = sign;
             $.ajax({
-                url: "user_info/register",
+                url: "user_info/register_by_admin",
                 type: "post",
                 data: JSON.stringify(userInfoDto),
                 dataType: "json",

@@ -68,13 +68,24 @@ public class UserInfoController {
 
     /**
      * 用户注册
-     * @param userInfoDto
+     * @param
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto register(String account,String password,int code,HttpServletRequest httpServletRequest) {
+        return iUserInfoService.register(account,password,code,httpServletRequest);
+    }
+
+    /**
+     * 管理员注册用户
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/register_by_admin", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public JsonResponseDto register(@RequestBody UserInfoDto userInfoDto) {
-        return iUserInfoService.register(userInfoDto);
+        return iUserInfoService.registerByAdmin(userInfoDto);
     }
 
 
@@ -124,7 +135,7 @@ public class UserInfoController {
     @RequestMapping(value = "/update_user_info", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public JsonResponseDto  updateInfo(@RequestBody UserInfoDto userInfoDto){
-        return iUserInfoService.upupdateUserInfo(userInfoDto);
+        return iUserInfoService.updateUserInfo(userInfoDto);
     }
 
     /**
@@ -158,8 +169,19 @@ public class UserInfoController {
      */
     @RequestMapping(value = "/get_code", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public JsonResponseDto  getCode(String account){
-        return iUserInfoService.getCode(account);
+    public JsonResponseDto  getCode(String account,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse){
+        return iUserInfoService.getCode(account,httpServletRequest,httpServletResponse);
+    }
+
+    /**
+     * 忘记密码
+     * @param account
+     * @return
+     */
+    @RequestMapping(value = "/forgetpassword", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public JsonResponseDto  getCode(String account,String password,int code,HttpServletRequest httpServletRequest){
+        return iUserInfoService.forgetPassword(account,password,code,httpServletRequest);
     }
 
 }

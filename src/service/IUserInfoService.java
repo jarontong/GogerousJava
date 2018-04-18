@@ -17,9 +17,11 @@ public interface IUserInfoService {
 
     JsonResponseDto queryUserListByPage(PageDto pageDto);
 
-    JsonResponseDto register(UserInfoDto userInfoDto);
+    JsonResponseDto register(String account, String password, int code, HttpServletRequest request);
 
-    JsonResponseDto login(String account, String password ,HttpServletRequest request, HttpServletResponse response);
+    JsonResponseDto registerByAdmin(UserInfoDto userInfoDto);
+
+    JsonResponseDto login(String account, String password, HttpServletRequest request, HttpServletResponse response);
 
     JsonResponseDto deleteUser(int userId);
 
@@ -27,11 +29,13 @@ public interface IUserInfoService {
 
     JsonResponseDto deletePreAvatar(String avatarPath);
 
-    JsonResponseDto upupdateUserInfo(UserInfoDto userInfoDto);
+    JsonResponseDto updateUserInfo(UserInfoDto userInfoDto);
 
     int queryUserCount();
 
-    JsonResponseDto adminLogin(AdminLoginDto adminLoginDto, HttpServletRequest  request);
+    JsonResponseDto adminLogin(AdminLoginDto adminLoginDto, HttpServletRequest request);
 
-    JsonResponseDto getCode(String account);
+    JsonResponseDto getCode(String account, HttpServletRequest request, HttpServletResponse response);
+
+    JsonResponseDto forgetPassword(String account, String password, int code, HttpServletRequest request);
 }

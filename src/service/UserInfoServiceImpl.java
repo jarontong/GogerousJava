@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import utils.Constants;
+import utils.EmailCodeUtil;
+import utils.PasswordSecretUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -58,7 +60,38 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
 
     @Override
-    public JsonResponseDto register(UserInfoDto userInfoDto) {
+    public JsonResponseDto register(String account, String password, int code, HttpServletRequest request) {
+        UserInfoDto user = iUserInfoMapper.queryUserByAccount(account);
+        if (user != null) {
+            return new JsonResponseDto<>(STATUE_FAIL, "注册失败,账号已存在", "");
+        } else {
+            int cookieCode = 0;
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(Constants.VERIFICATION_CODE)) {
+                    cookieCode = Integer.valueOf(cookie.getValue());
+                }
+            }
+            if (cookieCode <= 0) {
+                return new JsonResponseDto<>(STATUE_FAIL, "注册失败,验证码已过期", "");
+            } else if (cookieCode != code) {
+                return new JsonResponseDto<>(STATUE_FAIL, "注册失败,验证码错误", "");
+            }
+            UserInfoDto userInfoDto = new UserInfoDto();
+            userInfoDto.setAccount(account);
+            userInfoDto.setPassword(PasswordSecretUtil.secretPassword(password));
+            int index = iUserInfoMapper.register(userInfoDto);
+            if (index > 0) {
+                return new JsonResponseDto<>(STATUE_OK, "注册成功", "");
+            } else {
+                return new JsonResponseDto<>(STATUE_FAIL, "注册失败", "");
+            }
+        }
+    }
+
+    @Override
+    public JsonResponseDto registerByAdmin(UserInfoDto userInfoDto) {
+        System.out.println(userInfoDto.getAccount()+"--"+userInfoDto.getPassword());
         UserInfoDto user = iUserInfoMapper.queryUserByAccount(userInfoDto.getAccount());
         if (user != null) {
             return new JsonResponseDto<>(STATUE_FAIL, "注册失败,账号已存在", "");
@@ -70,26 +103,24 @@ public class UserInfoServiceImpl implements IUserInfoService {
                 return new JsonResponseDto<>(STATUE_FAIL, "注册失败", "");
             }
         }
-
-
     }
 
     @Override
     public JsonResponseDto login(String account, String password, HttpServletRequest request, HttpServletResponse response) {
-        Map<String,String> loginInfo=new HashMap<>();
-        loginInfo.put("account",account);
-        loginInfo.put("password",password);
+        Map<String, String> loginInfo = new HashMap<>();
+        loginInfo.put("account", account);
+        loginInfo.put("password", PasswordSecretUtil.secretPassword(password));
         UserInfoDto userInfoDto = iUserInfoMapper.login(loginInfo);
         if (null == userInfoDto) {
             return new JsonResponseDto<>(Constants.STATUE_FAIL, "用户名或密码错误", "");
         } else {
-            HttpSession session=request.getSession(true);
-            session.setAttribute("isLogin",true);
+            HttpSession session = request.getSession(true);
+            session.setAttribute("isLogin", true);
             // 将token放进Cookie
             Cookie cookie = new Cookie(Constants.USER_IS_LOGIN, "login");
             cookie.setPath("/");
             // 过期时间设为10min
-            cookie.setMaxAge(10);
+            cookie.setMaxAge(Constants.COOKIE_TIME);
             response.addCookie(cookie);
             return new JsonResponseDto<>(Constants.STATUE_OK, "登录成功", userInfoDto);
         }
@@ -170,7 +201,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
     @Override
-    public JsonResponseDto upupdateUserInfo(UserInfoDto userInfoDto) {
+    public JsonResponseDto updateUserInfo(UserInfoDto userInfoDto) {
         if (0 >= iUserInfoMapper.updateUserInfo(userInfoDto)) {
             return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "0");
         } else {
@@ -186,17 +217,46 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public JsonResponseDto adminLogin(AdminLoginDto adminLoginDto, HttpServletRequest request) {
-        if(adminLoginDto.getAccount().equals(Constants.ADMIN_ACCOUNT)&&adminLoginDto.getPassword().equals(Constants.ADMIN_PASSWORD)){
+        if (adminLoginDto.getAccount().equals(Constants.ADMIN_ACCOUNT) && adminLoginDto.getPassword().equals(Constants.ADMIN_PASSWORD)) {
             request.getSession().setAttribute("admin_login", true);
             return new JsonResponseDto<>(STATUE_OK, "登录成功", "1");
-        }else {
+        } else {
             return new JsonResponseDto<>(STATUE_FAIL, "用户或密码错误", "0");
         }
     }
 
     @Override
-    public JsonResponseDto getCode(String account) {
-        //TODO
-        return null;
+    public JsonResponseDto getCode(String account, HttpServletRequest request, HttpServletResponse response) {
+        String code = EmailCodeUtil.qqSendMail(account);
+        if (code != null && !code.equals("")) {
+            Cookie cookie = new Cookie(Constants.VERIFICATION_CODE, code);
+            cookie.setPath("/");
+            // 过期时间设为10min
+            cookie.setMaxAge(Constants.COOKIE_CODE_TIME);
+            response.addCookie(cookie);
+            return new JsonResponseDto(STATUE_OK, "发送成功", code);
+        } else {
+            return new JsonResponseDto<>(STATUE_FAIL, "发送失败", "");
+        }
+    }
+
+    @Override
+    public JsonResponseDto forgetPassword(String account, String password, int code, HttpServletRequest request) {
+        int cookieCode = 0;
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(Constants.VERIFICATION_CODE)) {
+                cookieCode = Integer.valueOf(cookie.getValue());
+            }
+        }
+        if (cookieCode <= 0) {
+            return new JsonResponseDto<>(STATUE_FAIL, "修改失败,验证码已过期", "");
+        } else if (cookieCode != code) {
+            return new JsonResponseDto<>(STATUE_FAIL, "修改失败,验证码错误", "");
+        }
+        UserInfoDto userInfoDto = new UserInfoDto();
+        userInfoDto.setAccount(account);
+        userInfoDto.setPassword(password);
+        return updateUserInfo(userInfoDto);
     }
 }
