@@ -33,4 +33,5 @@ public interface IUserInfoService {
 
     JsonResponseDto adminLogin(AdminLoginDto adminLoginDto, HttpServletRequest  request);
 
+    JsonResponseDto getCode(String account);
 }

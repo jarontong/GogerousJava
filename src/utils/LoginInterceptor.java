@@ -31,6 +31,8 @@ public class LoginInterceptor implements HandlerInterceptor {
                         try {
                             // 检查cookie
                             userToke = cookie.getValue();
+                            cookie.setMaxAge(Constants.COOKIE_TIME);
+                            httpServletResponse.addCookie(cookie);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

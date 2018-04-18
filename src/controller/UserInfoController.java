@@ -150,4 +150,16 @@ public class UserInfoController {
         return iUserInfoService.deleteUser(userId);
     }
 
+
+    /**
+     * 获取验证码
+     * @param account
+     * @return
+     */
+    @RequestMapping(value = "/get_code", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public JsonResponseDto  getCode(String account){
+        return iUserInfoService.getCode(account);
+    }
+
 }

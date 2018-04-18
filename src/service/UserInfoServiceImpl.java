@@ -53,7 +53,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public JsonResponseDto queryUserListByPage(PageDto pageDto) {
-        return new JsonResponseDto(STATUE_OK, "查询成功", iUserInfoMapper.queryUserListByPage(pageDto));
+        return new JsonResponseDto<>(STATUE_OK, "查询成功", iUserInfoMapper.queryUserListByPage(pageDto));
     }
 
 
@@ -172,9 +172,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public JsonResponseDto upupdateUserInfo(UserInfoDto userInfoDto) {
         if (0 >= iUserInfoMapper.updateUserInfo(userInfoDto)) {
-            return new JsonResponseDto(STATUE_FAIL, "更新失败", "0");
+            return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "0");
         } else {
-            return new JsonResponseDto(STATUE_OK, "更新成功", "1");
+            return new JsonResponseDto<>(STATUE_OK, "更新成功", "1");
         }
 
     }
@@ -188,9 +188,14 @@ public class UserInfoServiceImpl implements IUserInfoService {
     public JsonResponseDto adminLogin(AdminLoginDto adminLoginDto, HttpServletRequest request) {
         if(adminLoginDto.getAccount().equals(Constants.ADMIN_ACCOUNT)&&adminLoginDto.getPassword().equals(Constants.ADMIN_PASSWORD)){
             request.getSession().setAttribute("admin_login", true);
-            return new JsonResponseDto(STATUE_OK, "登录成功", "1");
+            return new JsonResponseDto<>(STATUE_OK, "登录成功", "1");
         }else {
-            return new JsonResponseDto(STATUE_FAIL, "用户或密码错误", "0");
+            return new JsonResponseDto<>(STATUE_FAIL, "用户或密码错误", "0");
         }
+    }
+
+    @Override
+    public JsonResponseDto getCode(String account) {
+        return null;
     }
 }
