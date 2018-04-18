@@ -15,5 +15,6 @@ public class Constants {
     public static final String USER_AVATAR="preUpdateAvatar";
     public static final String PICTURE_COVER="preUpdateCover";
     public static final String PICTURES="prePostPicture";
+    public static final String USER_IS_LOGIN="user_is_login";
 
 }

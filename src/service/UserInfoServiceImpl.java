@@ -81,18 +81,17 @@ public class UserInfoServiceImpl implements IUserInfoService {
         loginInfo.put("password",password);
         UserInfoDto userInfoDto = iUserInfoMapper.login(loginInfo);
         if (null == userInfoDto) {
-            return new JsonResponseDto(Constants.STATUE_FAIL, "用户名或密码错误", "");
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "用户名或密码错误", "");
         } else {
             HttpSession session=request.getSession(true);
             session.setAttribute("isLogin",true);
-            String      token = "aaa";
             // 将token放进Cookie
-            Cookie cookie = new Cookie("JWT", token);
+            Cookie cookie = new Cookie(Constants.USER_IS_LOGIN, "login");
             cookie.setPath("/");
             // 过期时间设为10min
-            cookie.setMaxAge(60*10);
+            cookie.setMaxAge(10);
             response.addCookie(cookie);
-            return new JsonResponseDto(Constants.STATUE_OK, "登录成功", userInfoDto);
+            return new JsonResponseDto<>(Constants.STATUE_OK, "登录成功", userInfoDto);
         }
     }
 
@@ -116,7 +115,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public JsonResponseDto preUpdateAvatar(CommonsMultipartFile file, HttpServletRequest request) {
         if (null == file) {
-            return new JsonResponseDto(0, "文件为空", "");
+            return new JsonResponseDto<>(0, "文件为空", "");
         } else {
             String fileAddress = "";
             ServletContext servletContext = request.getSession().getServletContext();
@@ -160,7 +159,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
                     }
                 }
             }
-            return new JsonResponseDto(STATUE_OK, "上传成功", fileAddress);
+            return new JsonResponseDto<>(STATUE_OK, "上传成功", fileAddress);
         }
 
     }
