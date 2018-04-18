@@ -12,7 +12,7 @@ public class AndroidServiceCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         //此判断需完善
         System.out.println("客户端token验证");
-        if(httpServletRequest.getSession().getAttribute("login")!=null){
+        if(httpServletRequest.getSession().getAttribute("admin_login")!=null){
             return true;
         }
         return false;
