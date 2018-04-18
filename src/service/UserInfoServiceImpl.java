@@ -196,6 +196,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public JsonResponseDto getCode(String account) {
+        //TODO
         return null;
     }
 }
