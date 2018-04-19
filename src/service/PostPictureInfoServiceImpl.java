@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.List;
 
+import static utils.Constants.STATUE_FAIL;
 import static utils.Constants.STATUE_OK;
 
 @Service
@@ -51,9 +52,9 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     public JsonResponseDto postPicture(PostPictureInfoDto postPictureInfoDto) {
         int index = iPostPictureInfoMapper.postPicture(postPictureInfoDto);
         if (0 >= index) {
-            return new JsonResponseDto(Constants.STATUE_FAIL, "发布失败", "");
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "发布失败", "");
         } else {
-            return new JsonResponseDto(Constants.STATUE_OK, "发布成功", postPictureInfoDto.getId());
+            return new JsonResponseDto<>(Constants.STATUE_OK, "发布成功", postPictureInfoDto.getId());
         }
     }
 
@@ -61,18 +62,18 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     public JsonResponseDto deletePostPicture(int postPictureId) {
         int index = iPostPictureInfoMapper.deletePostPicture(postPictureId);
         if (0 >= index) {
-            return new JsonResponseDto(Constants.STATUE_FAIL, "删除失败", "0");
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "删除失败", "0");
         } else {
-            return new JsonResponseDto(Constants.STATUE_OK, "删除成功", "1");
+            return new JsonResponseDto<>(Constants.STATUE_OK, "删除成功", "1");
         }
     }
 
     @Override
     public JsonResponseDto preUpdateCover(CommonsMultipartFile file, HttpServletRequest request) {
         if (null == file) {
-            return new JsonResponseDto(0, "文件为空", "");
+            return new JsonResponseDto<>(0, "文件为空", "");
         } else {
-            String fileAddress = "";
+            String fileName = "";
             ServletContext servletContext = request.getSession().getServletContext();
             //上传位置
             String path = servletContext.getRealPath(File.separator + Constants.PICTURE_COVER) + File.separator;   //设定文件保存的目录
@@ -81,11 +82,11 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
                 f.mkdirs();
             }
             if (!file.isEmpty()) {
-                fileAddress = Constants.BASE_URL + File.separator +  Constants.PICTURE_COVER + File.separator + file.getOriginalFilename();
+                fileName = file.getOriginalFilename();
                 FileOutputStream fos = null;
                 InputStream is = null;
                 try {
-                    fos = new FileOutputStream(path + file.getOriginalFilename());
+                    fos = new FileOutputStream(path+fileName);
                     is = file.getInputStream();
                     byte[] b = new byte[1024 * 1024];
                     int len;
@@ -94,8 +95,10 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
                     }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
                 } finally {
                     if (null != fos) {
                         try {
@@ -113,7 +116,7 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
                     }
                 }
             }
-            return new JsonResponseDto(STATUE_OK, "上传成功", fileAddress);
+            return new JsonResponseDto(STATUE_OK, "上传成功", File.separator + Constants.PICTURE_COVER +  File.separator+fileName);
         }
     }
 

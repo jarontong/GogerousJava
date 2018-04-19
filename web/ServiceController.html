@@ -33,7 +33,7 @@
     <div style="margin-top:100px;width: 90%;height: 100%;position:fixed;background: #eeeeee;text-align: center">
         <!--用户信息列表面板-->
         <div id="userInfoDiv"
-             style="display:none;margin:50px;width: 85%;height: 100%;position:fixed;background: white;">
+             style="display:none;overflow:scroll;margin:50px;width: 80%;height: 500px;position:fixed;background: white;">
             <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">GG用户列表</p>
             <button onclick="resgiter()" class="layui-btn">添加用户</button>
             <table class="layui-table" lay-skin="line" id="userTableList">
@@ -63,7 +63,7 @@
         </div>
         <!--用户注册面板-->
         <div id="registerEditDiv"
-             style="display:none;overflow:scroll;margin:50px;width: 85%;height: 800px;position:fixed;background: white;text-align: left">
+             style="display:none;overflow:scroll;margin:50px;width: 80%;height: 500px;position:fixed;background: white;text-align: left">
             <button style="margin-left: 50px;margin-top: 50px" onclick="registerReturn()"
                     class="layui-btn  layui-btn-sm layui-btn-primary">
                 <i class="layui-icon">&#xe65c;</i>
@@ -137,7 +137,7 @@
         </div>
         <!--用户信息编辑面板-->
         <div id="userInfoEditDiv"
-             style="display:none;margin:50px;width: 85%;height: 100%;position:fixed;background: white;text-align: left">
+             style="display:none;overflow:scroll;margin:50px;width: 80%;height: 500px;position:fixed;background: white;text-align: left">
             <button style="margin-left: 50px;margin-top: 50px" onclick="userEditReturn()"
                     class="layui-btn  layui-btn-sm layui-btn-primary">
                 <i class="layui-icon">&#xe65c;</i>
@@ -198,7 +198,7 @@
         </div>
         <!--图片信息发布列表-->
         <div id="pictureInfoDiv"
-             style="display:none;margin:50px;width: 85%;height: 100%;position:fixed;background: white;text-align: center">
+             style="display:none;overflow:scroll;margin:50px;width: 80%;height: 500px;;position:fixed;background: white;text-align: center">
             <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">
                 GG用户发布图片列表</p>
             <button onclick="postPicture()" class="layui-btn">发布图片</button>
@@ -231,7 +231,7 @@
         </div>
         <!--图片信息编辑面板-->
         <div id="postPictureInfoDiv"
-             style="display:none;overflow:scroll;margin:50px;width: 85%;height: 800px;position:fixed;background: white;text-align: left">
+             style="display:none;overflow:scroll;margin:50px;width: 80%;height: 500px;position:fixed;background: white;text-align: left">
             <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">发布信息编辑</p>
             <button style="margin-left: 50px;margin-top: 50px" onclick="postPictureEditReturn()"
                     class="layui-btn  layui-btn-sm layui-btn-primary">
@@ -297,7 +297,7 @@
 
                 <div id="picturesDiv" class="layui-form-item" style="display: block;width: 800px;margin-left: 100px">
                     <p style="color: #0C0C0C;line-height: 50px;text-align: left;margin-left:60px;font-size: large ">
-                        套图列表</p>
+                        套图列表<h6>(删除图片的话是已经删除后台的数据了，请不要按保存)</h6></p>
                     <table class="layui-table" lay-skin="line" id="pictures">
                         <colgroup>
                             <col width="180">
@@ -330,7 +330,7 @@
         </div>
         <!--发布套图面板-->
         <div id="postPictureDiv"
-             style="display:none;overflow:scroll;margin:50px;width: 85%;height: 800px;position:fixed;background: white;text-align: left">
+             style="display:none;overflow:scroll;margin:50px;width: 80%;height: 500px;position:fixed;background: white;text-align: left">
             <p style="color: #0C0C0C;line-height: 80px;text-align: left;margin-left:60px;font-size: large ">发布套图</p>
             <button style="margin-left: 50px;margin-top: 50px" onclick="postPictureReturn()"
                     class="layui-btn  layui-btn-sm layui-btn-primary">
@@ -409,6 +409,6 @@
 </div>
 
 <script src="http://www.chennaicha.club/gogerous/layui/layui.js"></script>
-<script src="ServiceCtontroller.js"></script>
+<script src="http://www.chennaicha.club/ServiceCtontroller.js"></script>
 </body>
 </html>

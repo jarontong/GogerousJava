@@ -91,11 +91,11 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public JsonResponseDto registerByAdmin(UserInfoDto userInfoDto) {
-        System.out.println(userInfoDto.getAccount()+"--"+userInfoDto.getPassword());
         UserInfoDto user = iUserInfoMapper.queryUserByAccount(userInfoDto.getAccount());
         if (user != null) {
             return new JsonResponseDto<>(STATUE_FAIL, "注册失败,账号已存在", "");
         } else {
+            userInfoDto.setPassword(PasswordSecretUtil.secretPassword(userInfoDto.getPassword()));
             int index = iUserInfoMapper.register(userInfoDto);
             if (index > 0) {
                 return new JsonResponseDto<>(STATUE_OK, "注册成功", "");
@@ -146,23 +146,23 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public JsonResponseDto preUpdateAvatar(CommonsMultipartFile file, HttpServletRequest request) {
         if (null == file) {
-            return new JsonResponseDto<>(0, "文件为空", "");
+            return new JsonResponseDto<>(STATUE_FAIL, "文件为空", "");
         } else {
-            String fileAddress = "";
+            String fileName = "";
+            //获得项目路径
             ServletContext servletContext = request.getSession().getServletContext();
             //上传位置
-            String path = Constants.BASE_IMG_URL + File.separator + Constants.USER_AVATAR + File.separator;
-            //     String path = servletContext.getRealPath(File.separator + Constants.USER_AVATAR) + File.separator;   //设定文件保存的目录
+            String path = servletContext.getRealPath(File.separator + Constants.USER_AVATAR) + File.separator;   //设定文件保存的目录
             File f = new File(path);
             if (!f.exists()) {
                 f.mkdirs();
             }
             if (!file.isEmpty()) {
-                fileAddress = Constants.BASE_IMG_URL + File.separator + Constants.USER_AVATAR + File.separator + file.getOriginalFilename();
+                fileName = file.getOriginalFilename();
                 FileOutputStream fos = null;
                 InputStream is = null;
                 try {
-                    fos = new FileOutputStream(path + file.getOriginalFilename());
+                    fos = new FileOutputStream(path + fileName);
                     is = file.getInputStream();
                     byte[] b = new byte[1024 * 1024];
                     int len;
@@ -171,8 +171,10 @@ public class UserInfoServiceImpl implements IUserInfoService {
                     }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
                 } finally {
                     if (null != fos) {
                         try {
@@ -190,7 +192,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
                     }
                 }
             }
-            return new JsonResponseDto<>(STATUE_OK, "上传成功", fileAddress);
+            return new JsonResponseDto<>(STATUE_OK, "上传成功", File.separator + Constants.USER_AVATAR + File.separator + fileName);
         }
 
     }
@@ -234,7 +236,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
             // 过期时间设为10min
             cookie.setMaxAge(Constants.COOKIE_CODE_TIME);
             response.addCookie(cookie);
-            return new JsonResponseDto(STATUE_OK, "发送成功", code);
+            return new JsonResponseDto<>(STATUE_OK, "发送成功", code);
         } else {
             return new JsonResponseDto<>(STATUE_FAIL, "发送失败", "");
         }

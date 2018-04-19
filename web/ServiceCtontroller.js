@@ -250,10 +250,9 @@ layui.use('form', function () {
         var sign = $('#register_edit_sgin').val();
         var avatar = $('#register_edit_avatar').attr('src');
         var nickname = $('#register_edit_nickname').val();
-        alert(account + "--" + password + "--" + passworda + "--" + avatar + "--" + gender + "--" + nickname + "--" + sign)
         if (password == passworda) {
             var pwd = $.md5(password);
-            var userInfoDto = {}
+            var userInfoDto = {};
             userInfoDto.account = account;
             userInfoDto.avatar = avatar;
             userInfoDto.password = pwd;
@@ -576,7 +575,7 @@ function getPictures(postId) {
                 var tr;
                 tr =
                     '<td id="picture_id' + i + '">' + data.results[i].id + '</td>'
-                    + '<td>' + '<img id="picture_img' + i + '" alt="套图封面" src="' + data.results[i].pictureAddress + '" name="cover" width="100" type="">' + '</td>'
+                    + '<td>' + '<img id="picture_img' + i + '" alt="套图封面" src="' + data.results[i].pictureAddress + '" name="cover" width="100" >' + '</td>'
                     + '<td>' + '<input id="picture_sort' + i + '" type="text" name="sort" lay-verify="required"  required placeholder=""autocomplete="off" class="layui-input" value="' + data.results[i].sort + '">' + '</td>'
                     + '<td>' + '<input id="picture_file' + i + '" type="file" value="更换" style="margin-right: 10px" onchange="changePicture(this' + "," + i + ')">' + '<button type="button" class="layui-btn layui-btn-danger layui-btn-xs  layui-btn-xs" onclick="deletePicture(' + data.results[i].id + "," + postId + ')" >' + btnDelete + '</button>' + '</td>'
                 $("#pictures").append('<tr>' + tr + '</tr>')
@@ -600,6 +599,7 @@ function changePicture(node, imgId) {
         contentType: false,
         success: function (data) {
             if ('200' == data.statueCode) {
+                $('#' + 'picture_img' + imgId).attr('src', data.results);
                 layer.msg("更换成功")
             } else {
                 layer.msg("更换失败")
@@ -609,30 +609,30 @@ function changePicture(node, imgId) {
             layer.msg("更换失败")
         }
     });
-    var imgURL = "";
-    try {
-        var file = null;
-        if (node.files && node.files[0]) {
-            file = node.files[0];
-        } else if (node.files && node.files.item(0)) {
-            file = node.files.item(0);
-        }
-        //Firefox 因安全性问题已无法直接通过input[file].value 获取完整的文件路径
-        try {
-            imgURL = file.getAsDataURL();
-        } catch (e) {
-            imgRUL = window.URL.createObjectURL(file);
-        }
-    } catch (e) {
-        if (node.files && node.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                imgURL = e.target.result;
-            };
-            reader.readAsDataURL(node.files[0]);
-        }
-    }
-    $('#' + 'picture_img' + imgId).attr('src', imgRUL);
+    // var imgURL = "";
+    // try {
+    //     var file = null;
+    //     if (node.files && node.files[0]) {
+    //         file = node.files[0];
+    //     } else if (node.files && node.files.item(0)) {
+    //         file = node.files.item(0);
+    //     }
+    //     //Firefox 因安全性问题已无法直接通过input[file].value 获取完整的文件路径
+    //     try {
+    //         imgURL = file.getAsDataURL();
+    //     } catch (e) {
+    //         imgRUL = window.URL.createObjectURL(file);
+    //     }
+    // } catch (e) {
+    //     if (node.files && node.files[0]) {
+    //         var reader = new FileReader();
+    //         reader.onload = function (e) {
+    //             imgURL = e.target.result;
+    //         };
+    //         reader.readAsDataURL(node.files[0]);
+    //     }
+    // }
+
 }
 
 
