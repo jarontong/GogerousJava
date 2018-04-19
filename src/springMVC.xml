@@ -55,7 +55,9 @@
             <mvc:exclude-mapping path="/user_info/register_by_admin"/>
             <mvc:exclude-mapping path="/user_info/login"/>
             <mvc:exclude-mapping path="/user_info/get_code"/>
-            <mvc:exclude-mapping path="/"/>
+            <mvc:exclude-mapping path="/app_info/update_app_info"/>
+            <mvc:exclude-mapping path="/app_info/update_app_info"/>
+            <mvc:exclude-mapping path="/app_info/get_update_app_info"/>
             <mvc:exclude-mapping path="/ServiceLogin.html"/>
             <bean class="utils.LoginInterceptor"></bean>
         </mvc:interceptor>

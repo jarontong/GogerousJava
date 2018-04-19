@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.IAppInfoMapper">
+    <insert id="add"  parameterType="AppInfoDto"  >
+        insert into app_info(version,version_min,update_time,version_name,update_content,download_address)
+         values (#{version},#{versionMIn},#{updateTime},#{versionName},#{updateContent},#{downloadAddress})
+    </insert>
+
+    <select id="query" parameterType="int" resultType="AppInfoDto">
+        select * from   app_info  where version= #{version}
+    </select>
+
+    <select id="queryRelease" resultType="AppInfoDto" >
+        select * from app_info WHERE version=(select MAX(version) from app_info)
+    </select>
+
+
+</mapper>

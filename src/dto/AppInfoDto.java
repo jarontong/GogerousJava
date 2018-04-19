@@ -2,7 +2,7 @@ package dto;
 
 import java.sql.Timestamp;
 
-public class AppDtp {
+public class AppInfoDto {
 
     private int id;
     private int version;
@@ -14,7 +14,7 @@ public class AppDtp {
 
     @Override
     public String toString() {
-        return "AppDtp{" +
+        return "AppInfoDto{" +
                 "id=" + id +
                 ", version=" + version +
                 ", versionMin=" + versionMin +

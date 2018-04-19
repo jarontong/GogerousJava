@@ -11,12 +11,14 @@ public class Constants {
     public static final int COOKIE_CODE_TIME=60;//验证码有效时长
 
     public static final String BASE_URL="http://localhost:8080/";
-    public static final String BASE_IMG_URL="usr"+ File.separator+"local"+  File.separator+"tomcat7"+File.separator+"webapps"+File.separator+"gogerousImg";
     public static final String ADMIN_ACCOUNT="admin";
     public static final String ADMIN_PASSWORD="admin";
+
     public static final String USER_AVATAR="preUpdateAvatar";
     public static final String PICTURE_COVER="preUpdateCover";
+    public static final String APK_File="apkFile";
     public static final String PICTURES="prePostPicture";
+
     public static final String USER_IS_LOGIN="user_is_login";
     public static final String VERIFICATION_CODE="verification_code";
 }
