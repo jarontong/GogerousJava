@@ -115,15 +115,27 @@ public class UserInfoController {
     }
 
     /**
-     * 预更新用户头像
+     * 客户端更新用户头像
+     * @param file
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/upadate_avatar", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public JsonResponseDto updateAvatar(int userId,@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request) {
+       return iUserInfoService.updateAvatar(userId,file,request);
+    }
+
+    /**
+     * 后台管理预更新用户头像
      * @param file
      * @param request
      * @return
      */
     @RequestMapping(value = "/pre_upadate_avatar", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public JsonResponseDto<String> updateAvatar(@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request) {
-       return iUserInfoService.preUpdateAvatar(file,request);
+    public JsonResponseDto preUpdateAvatar(@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request) {
+        return iUserInfoService.predateAvatar(file,request);
     }
 
 
@@ -134,9 +146,10 @@ public class UserInfoController {
      */
     @RequestMapping(value = "/update_user_info", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public JsonResponseDto  updateInfo(@RequestBody UserInfoDto userInfoDto){
+    public JsonResponseDto  updateInfo(UserInfoDto userInfoDto){
         return iUserInfoService.updateUserInfo(userInfoDto);
     }
+
 
     /**
      * 删除用户头像

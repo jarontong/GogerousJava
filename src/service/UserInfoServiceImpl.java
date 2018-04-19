@@ -66,15 +66,18 @@ public class UserInfoServiceImpl implements IUserInfoService {
             return new JsonResponseDto<>(STATUE_FAIL, "注册失败,账号已存在", "");
         } else {
             int cookieCode = 0;
+            String cookieAccount="";
             Cookie[] cookies = request.getCookies();
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(Constants.VERIFICATION_CODE)) {
                     cookieCode = Integer.valueOf(cookie.getValue());
+                }else if(cookie.getName().equals(Constants.VERIFICATION_ACCOUNT)){
+                    cookieAccount=cookie.getValue();
                 }
             }
-            if (cookieCode <= 0) {
+            if (cookieCode <= 0||cookieAccount.equals("")) {
                 return new JsonResponseDto<>(STATUE_FAIL, "注册失败,验证码已过期", "");
-            } else if (cookieCode != code) {
+            } else if (cookieCode != code||!account.equals(cookieAccount)) {
                 return new JsonResponseDto<>(STATUE_FAIL, "注册失败,验证码错误", "");
             }
             UserInfoDto userInfoDto = new UserInfoDto();
@@ -144,7 +147,70 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
     @Override
-    public JsonResponseDto preUpdateAvatar(CommonsMultipartFile file, HttpServletRequest request) {
+    public JsonResponseDto updateAvatar(int userId,CommonsMultipartFile file, HttpServletRequest request) {
+        if (null == file) {
+            return new JsonResponseDto<>(STATUE_FAIL, "文件为空", "");
+        } else {
+            String fileName = "";
+            //获得项目路径
+            ServletContext servletContext = request.getSession().getServletContext();
+            //上传位置
+            String path = servletContext.getRealPath(File.separator + Constants.USER_AVATAR) + File.separator;   //设定文件保存的目录
+            File f = new File(path);
+            if (!f.exists()) {
+                f.mkdirs();
+            }
+            if (!file.isEmpty()) {
+                fileName = file.getOriginalFilename();
+                FileOutputStream fos = null;
+                InputStream is = null;
+                try {
+                    fos = new FileOutputStream(path + fileName);
+                    is = file.getInputStream();
+                    byte[] b = new byte[1024 * 1024];
+                    int len;
+                    while ((len = is.read(b)) != -1) {
+                        fos.write(b, 0, len);
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "");
+                } finally {
+                    if (null != fos) {
+                        try {
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (null != is) {
+                        try {
+                            is.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            UserInfoDto userInfoDto=new UserInfoDto();
+            userInfoDto.setId(userId);
+            userInfoDto.setAvatar(File.separator + Constants.USER_AVATAR + File.separator + fileName);
+            int index=iUserInfoMapper.updateUserInfo(userInfoDto);
+            if(0>=index){
+                return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "");
+            }else {
+                return new JsonResponseDto<>(STATUE_OK, "更新成功", File.separator + Constants.USER_AVATAR + File.separator + fileName);
+            }
+
+        }
+
+    }
+
+    @Override
+    public JsonResponseDto predateAvatar(CommonsMultipartFile file, HttpServletRequest request) {
         if (null == file) {
             return new JsonResponseDto<>(STATUE_FAIL, "文件为空", "");
         } else {
@@ -193,8 +259,8 @@ public class UserInfoServiceImpl implements IUserInfoService {
                 }
             }
             return new JsonResponseDto<>(STATUE_OK, "上传成功", File.separator + Constants.USER_AVATAR + File.separator + fileName);
-        }
 
+        }
     }
 
     @Override
@@ -204,6 +270,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public JsonResponseDto updateUserInfo(UserInfoDto userInfoDto) {
+        if(userInfoDto.getPassword()!=null&&!userInfoDto.getPassword().equals("")){
+            userInfoDto.setPassword(PasswordSecretUtil.secretPassword(userInfoDto.getPassword()));
+        }
         if (0 >= iUserInfoMapper.updateUserInfo(userInfoDto)) {
             return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "0");
         } else {
@@ -232,10 +301,14 @@ public class UserInfoServiceImpl implements IUserInfoService {
         String code = EmailCodeUtil.qqSendMail(account);
         if (code != null && !code.equals("")) {
             Cookie cookie = new Cookie(Constants.VERIFICATION_CODE, code);
+            Cookie accountCookie=new Cookie(Constants.VERIFICATION_ACCOUNT,account);
             cookie.setPath("/");
+            accountCookie.setPath("/");
             // 过期时间设为10min
             cookie.setMaxAge(Constants.COOKIE_CODE_TIME);
+            accountCookie.setMaxAge(Constants.COOKIE_CODE_TIME);
             response.addCookie(cookie);
+            response.addCookie(accountCookie);
             return new JsonResponseDto<>(STATUE_OK, "发送成功", code);
         } else {
             return new JsonResponseDto<>(STATUE_FAIL, "发送失败", "");
@@ -245,20 +318,26 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public JsonResponseDto forgetPassword(String account, String password, int code, HttpServletRequest request) {
         int cookieCode = 0;
+        String cookieAccount="";
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(Constants.VERIFICATION_CODE)) {
                 cookieCode = Integer.valueOf(cookie.getValue());
+            }else if(cookie.getName().equals(Constants.VERIFICATION_ACCOUNT)){
+                cookieAccount=cookie.getValue();
             }
         }
-        if (cookieCode <= 0) {
+        if (cookieCode <= 0||cookieAccount.equals("")) {
             return new JsonResponseDto<>(STATUE_FAIL, "修改失败,验证码已过期", "");
-        } else if (cookieCode != code) {
+        } else if (cookieCode != code||!cookieAccount.equals(account)) {
             return new JsonResponseDto<>(STATUE_FAIL, "修改失败,验证码错误", "");
         }
-        UserInfoDto userInfoDto = new UserInfoDto();
-        userInfoDto.setAccount(account);
-        userInfoDto.setPassword(password);
-        return updateUserInfo(userInfoDto);
+        UserInfoDto userInfoDto=iUserInfoMapper.queryUserByAccount(account);
+        if(null==userInfoDto){
+            return new JsonResponseDto<>(STATUE_FAIL, "修改失败,用户不存在", "");
+        }else {
+            userInfoDto.setPassword(password);
+            return updateUserInfo(userInfoDto);
+        }
     }
 }

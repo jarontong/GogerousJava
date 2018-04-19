@@ -50,7 +50,7 @@ public class EmailCodeUtil {
             msg.setText(builder.toString());
             msg.setFrom(new InternetAddress("1021661582@qq.com"));
             Transport transport = session.getTransport();
-            transport.connect("smtp.qq.com", "1021661582@qq.com", "ktpzzgsrnvivbbbg");
+            transport.connect("smtp.qq.com", "1021661582@qq.com", "tuzaguzzbwsebbbh");
             //填写收件人邮箱
             transport.sendMessage(msg, new Address[] { new InternetAddress(toMail) });
             transport.close();

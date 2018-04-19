@@ -21,4 +21,5 @@ public class Constants {
 
     public static final String USER_IS_LOGIN="user_is_login";
     public static final String VERIFICATION_CODE="verification_code";
+    public static final String VERIFICATION_ACCOUNT="verification_account";
 }

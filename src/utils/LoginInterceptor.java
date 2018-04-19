@@ -16,6 +16,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         //后台登录判断
+        System.out.println("登录验证"+httpServletRequest.getRequestURL());
         if (httpServletRequest.getSession().getAttribute("admin_login") != null) {
             return true;
         } else {

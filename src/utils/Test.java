@@ -27,14 +27,14 @@ public class Test {
     private IPictureService iPictureService;
     @org.junit.Test
     public void test() {
-//        for (int i = 0; i < 50; i++) {
-//            UserInfoDto userInfoDto=new UserInfoDto();
-//            userInfoDto.setAccount("abc"+i);
-//            userInfoDto.setNickname("无猫元"+i+"号");
-//            userInfoDto.setPassword("abc");
-//            System.out.println( iUserInfoService.register(userInfoDto));
-//
-//        }
+        for (int i = 0; i < 50; i++) {
+            UserInfoDto userInfoDto=new UserInfoDto();
+            userInfoDto.setAccount("abc"+i);
+            userInfoDto.setNickname("无猫元"+i+"号");
+            userInfoDto.setPassword("abc");
+            System.out.println( iUserInfoService.registerByAdmin(userInfoDto));
+
+        }
 //        PageDto pageDto=new PageDto();
 //        pageDto.setStart(1*10);
 //        pageDto.setCount(10);

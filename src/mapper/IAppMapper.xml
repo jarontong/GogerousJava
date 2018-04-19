@@ -6,7 +6,7 @@
 <mapper namespace="mapper.IAppInfoMapper">
     <insert id="add"  parameterType="AppInfoDto"  >
         insert into app_info(version,version_min,update_time,version_name,update_content,download_address)
-         values (#{version},#{versionMIn},#{updateTime},#{versionName},#{updateContent},#{downloadAddress})
+         values (#{version},#{versionMin},#{updateTime},#{versionName},#{updateContent},#{downloadAddress})
     </insert>
 
     <select id="query" parameterType="int" resultType="AppInfoDto">

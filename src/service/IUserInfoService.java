@@ -25,7 +25,9 @@ public interface IUserInfoService {
 
     JsonResponseDto deleteUser(int userId);
 
-    JsonResponseDto preUpdateAvatar(CommonsMultipartFile file, HttpServletRequest request);
+    JsonResponseDto updateAvatar(int userId,CommonsMultipartFile file, HttpServletRequest request);
+
+    JsonResponseDto predateAvatar(CommonsMultipartFile file, HttpServletRequest request);
 
     JsonResponseDto deletePreAvatar(String avatarPath);
 
