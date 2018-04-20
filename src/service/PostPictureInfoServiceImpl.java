@@ -27,9 +27,9 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     public JsonResponseDto queryPostPictureList() {
         List<PostPictureInfoDto> postPictureInfoDtos = iPostPictureInfoMapper.queryPostPictureList();
         if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
-            return new JsonResponseDto(Constants.STATUE_FAIL, "列表为空", "");
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
         } else {
-            return new JsonResponseDto(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
+            return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
         }
     }
 
@@ -37,15 +37,15 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     public JsonResponseDto queryPostPictureById(int id) {
         PostPictureInfoDto postPictureInfoDto = iPostPictureInfoMapper.queryPostPictureById(id);
         if (null == postPictureInfoDto) {
-            return new JsonResponseDto(Constants.STATUE_FAIL, "id不存在", "");
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "id不存在", "");
         } else {
-            return new JsonResponseDto(Constants.STATUE_OK, "查询成功", postPictureInfoDto);
+            return new JsonResponseDto<>(Constants.STATUE_OK, "查询成功", postPictureInfoDto);
         }
     }
 
     @Override
     public JsonResponseDto queryPostPictureListByPage(PageDto pageDto) {
-        return new JsonResponseDto(STATUE_OK, "查询成功", iPostPictureInfoMapper.queryPostPictureListByPage(pageDto));
+        return new JsonResponseDto<>(STATUE_OK, "查询成功", iPostPictureInfoMapper.queryPostPictureListByPage(pageDto));
     }
 
     @Override
@@ -56,6 +56,22 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
         } else {
             return new JsonResponseDto<>(Constants.STATUE_OK, "发布成功", postPictureInfoDto.getId());
         }
+    }
+
+    @Override
+    public JsonResponseDto postPictureHasCover(PostPictureInfoDto postPictureInfoDto, CommonsMultipartFile file, HttpServletRequest request) {
+            String fileName=loadFile(file,request,Constants.PICTURE_COVER);
+            if(fileName.equals("")){
+                return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
+            }else {
+                postPictureInfoDto.setCover(File.separator + Constants.PICTURE_COVER +  File.separator+loadFile(file,request,Constants.PICTURE_COVER));
+                int index=iPostPictureInfoMapper.postPicture(postPictureInfoDto);
+                if(0>=index){
+                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
+                }else {
+                    return new JsonResponseDto<>(STATUE_OK, "上传成功", postPictureInfoDto);
+                }
+            }
     }
 
     @Override
@@ -70,13 +86,38 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
 
     @Override
     public JsonResponseDto preUpdateCover(CommonsMultipartFile file, HttpServletRequest request) {
-        if (null == file) {
-            return new JsonResponseDto<>(0, "文件为空", "");
+        String fileName=loadFile(file,request,Constants.PICTURE_COVER);
+        if(fileName.equals("")){
+            return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
+        }else {
+            return new JsonResponseDto<>(STATUE_OK, "上传成功", fileName);
+        }
+    }
+
+    @Override
+    public JsonResponseDto upDatePostPictureInfo(PostPictureInfoDto postPictureInfoDto) {
+        int index = iPostPictureInfoMapper.updatePostPictureInfo(postPictureInfoDto);
+        if (0 >= index) {
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "更新失败", "0");
         } else {
-            String fileName = "";
+            return new JsonResponseDto<>(Constants.STATUE_OK, "更新成功", "1");
+        }
+    }
+
+    @Override
+    public int queryPostPictureCount() {
+        return iPostPictureInfoMapper.queryPostPictureCount();
+    }
+
+
+    private String loadFile(CommonsMultipartFile file,HttpServletRequest request,String fileAddress) {
+        String fileName = "";
+        if (null == file) {
+            return fileName;
+        } else {
             ServletContext servletContext = request.getSession().getServletContext();
             //上传位置
-            String path = servletContext.getRealPath(File.separator + Constants.PICTURE_COVER) + File.separator;   //设定文件保存的目录
+            String path = servletContext.getRealPath(File.separator + fileAddress) + File.separator;   //设定文件保存的目录
             File f = new File(path);
             if (!f.exists()) {
                 f.mkdirs();
@@ -86,7 +127,7 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
                 FileOutputStream fos = null;
                 InputStream is = null;
                 try {
-                    fos = new FileOutputStream(path+fileName);
+                    fos = new FileOutputStream(path + fileName);
                     is = file.getInputStream();
                     byte[] b = new byte[1024 * 1024];
                     int len;
@@ -95,10 +136,10 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
                     }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
+                    fileName = "";
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
+                    fileName = "";
                 } finally {
                     if (null != fos) {
                         try {
@@ -116,22 +157,9 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
                     }
                 }
             }
-            return new JsonResponseDto(STATUE_OK, "上传成功", File.separator + Constants.PICTURE_COVER +  File.separator+fileName);
         }
+        return (File.separator + fileAddress + File.separator+fileName);
     }
 
-    @Override
-    public JsonResponseDto upDatePostPictureInfo(PostPictureInfoDto postPictureInfoDto) {
-        int index = iPostPictureInfoMapper.updatePostPictureInfo(postPictureInfoDto);
-        if (0 >= index) {
-            return new JsonResponseDto(Constants.STATUE_FAIL, "更新失败", "0");
-        } else {
-            return new JsonResponseDto(Constants.STATUE_OK, "更新成功", "1");
-        }
-    }
-
-    @Override
-    public int queryPostPictureCount() {
-        return iPostPictureInfoMapper.queryPostPictureCount();
-    }
 }
+

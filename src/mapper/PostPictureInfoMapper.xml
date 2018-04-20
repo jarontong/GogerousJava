@@ -9,8 +9,8 @@
     </select>
 
     <insert id="postPicture"   parameterType="PostPictureInfoDto" useGeneratedKeys="true" keyProperty="id" >
-        insert into post_picture_info (view_num,like_num,cover,post_time,is_hot,post_type,user_id) values
-         (#{viewNum},#{likeNum},#{cover},#{postTime},#{isHot},#{postType},#{userId})
+        insert into post_picture_info (view_num,like_num,cover,is_hot,post_type,user_id) values
+         (#{viewNum},#{likeNum},#{cover},#{isHot},#{postType},#{userId})
     </insert>
 
     <select id="queryPostPictureCount" resultType="int">
@@ -43,9 +43,6 @@
             </if>
             <if test="isHot!=null">
                 post_picture_info.is_hot=#{isHot},
-            </if>
-            <if test="postTime!=null">
-                post_picture_info.post_time=#{postTime}
             </if>
             <if test="postType!=null">
                 post_picture_info.post_Type=#{postType}

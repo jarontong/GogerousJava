@@ -69,6 +69,17 @@ public class PostPictureInfoController {
         return iPostPictureInfoService.postPicture(postPictureInfoDto);
     }
 
+    /**
+     * 发布套图
+     * @param postPictureInfoDto
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/post_has_file", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto postPictureHasFile( PostPictureInfoDto postPictureInfoDto,@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request) {
+        return iPostPictureInfoService.postPictureHasCover(postPictureInfoDto,file,request);
+    }
+
 
 
 

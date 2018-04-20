@@ -17,6 +17,8 @@ public interface IPostPictureInfoService {
 
     JsonResponseDto postPicture(PostPictureInfoDto postPictureInfoDto);
 
+    JsonResponseDto postPictureHasCover(PostPictureInfoDto postPictureInfoDto,CommonsMultipartFile file,HttpServletRequest request);
+
     JsonResponseDto deletePostPicture(int postPictureId);
 
     JsonResponseDto preUpdateCover(CommonsMultipartFile file, HttpServletRequest request);
