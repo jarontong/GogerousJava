@@ -5,7 +5,7 @@
 
 <mapper namespace="mapper.IPostPictureInfoMapper">
     <select id="queryPostPictureList" resultType="PostPictureInfoDto">
-        select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,account from  post_picture_info as a inner join user_info on a.user_id=user_info.id
+        select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,user_info.account from  post_picture_info as a inner join user_info on a.user_id=user_info.id
     </select>
 
     <insert id="postPicture"   parameterType="PostPictureInfoDto" useGeneratedKeys="true" keyProperty="id" >
@@ -17,15 +17,19 @@
         select count(*) from   post_picture_info
     </select>
 
+    <select id="queryPostPictureListByUserId" resultType="PostPictureInfoDto">
+        select * from   post_picture_info WHERE  post_picture_info.user_id=#{userId}
+    </select>
+
     <select id="queryPostPictureListByPage" resultType="PostPictureInfoDto">
-        (select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,account from  post_picture_info as a inner join user_info on a.user_id=user_info.id) ORDER BY is_hot DESC,post_time DESC
+        (select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,user_info.account from  post_picture_info as a inner join user_info on a.user_id=user_info.id) ORDER BY is_hot DESC,post_time DESC
         <if test="start!=null and count!=null">
             limit #{start},#{count}
         </if>
     </select>
 
     <select id="queryPostPictureById" parameterType="int" resultType="PostPictureInfoDto">
-        select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,account from  post_picture_info as a inner join user_info on a.user_id=user_info.id  where a.id= #{postPictureId}
+        select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,user_info.account from  post_picture_info as a inner join user_info on a.user_id=user_info.id  where a.id= #{postPictureId}
     </select>
 
 

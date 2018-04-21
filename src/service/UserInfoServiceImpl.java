@@ -1,15 +1,15 @@
 package service;
 
-import dto.AdminLoginDto;
-import dto.JsonResponseDto;
-import dto.PageDto;
-import dto.UserInfoDto;
+import dto.*;
+import mapper.IPictureMapper;
+import mapper.IPostPictureInfoMapper;
 import mapper.IUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import utils.Constants;
 import utils.EmailCodeUtil;
+import utils.FileUtil;
 import utils.PasswordSecretUtil;
 
 import javax.servlet.ServletContext;
@@ -30,6 +30,10 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Autowired
     IUserInfoMapper iUserInfoMapper;
+    @Autowired
+    IPictureMapper iPictureMapper;
+    @Autowired
+    IPostPictureInfoMapper iPostPictureInfoMapper;
 
 
     @Override
@@ -137,7 +141,40 @@ public class UserInfoServiceImpl implements IUserInfoService {
      * @return
      */
     @Override
-    public JsonResponseDto deleteUser(int userId) {
+    public JsonResponseDto deleteUser(int userId,HttpServletRequest request) {
+        ServletContext servletContext = request.getSession().getServletContext();
+        String path = servletContext.getRealPath(File.separator);   //设定文件保存的目录
+        List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostPictureListByUserId(userId);
+        if(postPictureInfoDtos!=null&&postPictureInfoDtos.size()>0){
+            for (PostPictureInfoDto temp : postPictureInfoDtos) {
+                PostPictureInfoDto postPictureInfoDto=iPostPictureInfoMapper.queryPostPictureById(temp.getId());
+                if(null!=postPictureInfoDto) {
+                    //删除封面图片
+                    File file=new File(path+postPictureInfoDto.getCover());
+                    if(file.exists()){
+                        file.delete();
+                    }
+                    //删除套图图片
+                    List<PictureDto> pictureDtos=iPictureMapper.queryPostPictureByPostId(temp.getId());
+                    if(pictureDtos!=null&&pictureDtos.size()>0){
+                        for (PictureDto pictureDto : pictureDtos) {
+                            File pictureFile=new File(path+pictureDto.getPictureAddress());
+                            if(pictureFile.exists()){
+                                pictureFile.delete();
+                            }
+                        }
+                    }
+                    iPostPictureInfoMapper.deletePostPicture(temp.getId());
+                }
+            }
+        }
+        UserInfoDto userInfoDto=iUserInfoMapper.queryUserById(userId);
+        if(null!=userInfoDto){
+            File file=new File(path+userInfoDto.getAvatar());
+            if(file.exists()){
+                file.delete();
+            }
+        }
         int index = iUserInfoMapper.deleteUser(userId);
         if (index > 0) {
             return new JsonResponseDto<>(STATUE_OK, "删除成功", "1");
@@ -151,114 +188,36 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (null == file) {
             return new JsonResponseDto<>(STATUE_FAIL, "文件为空", "");
         } else {
-            String fileName = "";
-            //获得项目路径
-            ServletContext servletContext = request.getSession().getServletContext();
-            //上传位置
-            String path = servletContext.getRealPath(File.separator + Constants.USER_AVATAR) + File.separator;   //设定文件保存的目录
-            File f = new File(path);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-            if (!file.isEmpty()) {
-                fileName = file.getOriginalFilename();
-                FileOutputStream fos = null;
-                InputStream is = null;
-                try {
-                    fos = new FileOutputStream(path + fileName);
-                    is = file.getInputStream();
-                    byte[] b = new byte[1024 * 1024];
-                    int len;
-                    while ((len = is.read(b)) != -1) {
-                        fos.write(b, 0, len);
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+            String fileName = FileUtil.upLoadFile(file,request,Constants.USER_AVATAR);
+            if(fileName.equals("")){
+                return new JsonResponseDto<>(STATUE_FAIL, "图片上传失败", "");
+            }else {
+                UserInfoDto userInfoDto=new UserInfoDto();
+                userInfoDto.setId(userId);
+                userInfoDto.setAvatar(fileName);
+                int index=iUserInfoMapper.updateUserInfo(userInfoDto);
+                if(0>=index){
                     return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "");
-                } finally {
-                    if (null != fos) {
-                        try {
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (null != is) {
-                        try {
-                            is.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                }else {
+                    return new JsonResponseDto<>(STATUE_OK, "更新成功", fileName);
                 }
             }
-            UserInfoDto userInfoDto=new UserInfoDto();
-            userInfoDto.setId(userId);
-            userInfoDto.setAvatar(File.separator + Constants.USER_AVATAR + File.separator + fileName);
-            int index=iUserInfoMapper.updateUserInfo(userInfoDto);
-            if(0>=index){
-                return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "");
-            }else {
-                return new JsonResponseDto<>(STATUE_OK, "更新成功", File.separator + Constants.USER_AVATAR + File.separator + fileName);
-            }
-
         }
 
     }
 
+    //后台管理用
     @Override
     public JsonResponseDto predateAvatar(CommonsMultipartFile file, HttpServletRequest request) {
         if (null == file) {
             return new JsonResponseDto<>(STATUE_FAIL, "文件为空", "");
         } else {
-            String fileName = "";
-            //获得项目路径
-            ServletContext servletContext = request.getSession().getServletContext();
-            //上传位置
-            String path = servletContext.getRealPath(File.separator + Constants.USER_AVATAR) + File.separator;   //设定文件保存的目录
-            File f = new File(path);
-            if (!f.exists()) {
-                f.mkdirs();
+            String fileName =FileUtil.upLoadFile(file,request,Constants.USER_AVATAR);
+            if(fileName.equals("")){
+                return new JsonResponseDto<>(STATUE_FAIL, "图片上传失败", "");
+            }else {
+                return new JsonResponseDto<>(STATUE_OK, "上传成功", fileName);
             }
-            if (!file.isEmpty()) {
-                fileName = file.getOriginalFilename();
-                FileOutputStream fos = null;
-                InputStream is = null;
-                try {
-                    fos = new FileOutputStream(path + fileName);
-                    is = file.getInputStream();
-                    byte[] b = new byte[1024 * 1024];
-                    int len;
-                    while ((len = is.read(b)) != -1) {
-                        fos.write(b, 0, len);
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
-                } finally {
-                    if (null != fos) {
-                        try {
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (null != is) {
-                        try {
-                            is.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-            return new JsonResponseDto<>(STATUE_OK, "上传成功", File.separator + Constants.USER_AVATAR + File.separator + fileName);
 
         }
     }

@@ -13,6 +13,9 @@
        SELECT * FROM  picture_info WHERE picture_info.post_picture_info_id=#{postId} ORDER BY sort ASC
     </select>
 
+    <select id="queryById" parameterType="int" resultType="PictureDto">
+        SELECT * FROM  picture_info WHERE picture_info.id=#{pictureId}
+    </select>
 
     <!--<update id="updatePostPictureInfo" parameterType="PictureDto" >-->
         <!--UPDATE post_picture_info-->

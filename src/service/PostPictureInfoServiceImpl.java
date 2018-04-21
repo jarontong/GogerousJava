@@ -2,12 +2,15 @@ package service;
 
 import dto.JsonResponseDto;
 import dto.PageDto;
+import dto.PictureDto;
 import dto.PostPictureInfoDto;
+import mapper.IPictureMapper;
 import mapper.IPostPictureInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import utils.Constants;
+import utils.FileUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +25,9 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
 
     @Autowired
     IPostPictureInfoMapper iPostPictureInfoMapper;
+
+    @Autowired
+    IPictureMapper iPictureMapper;
 
     @Override
     public JsonResponseDto queryPostPictureList() {
@@ -48,6 +54,7 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
         return new JsonResponseDto<>(STATUE_OK, "查询成功", iPostPictureInfoMapper.queryPostPictureListByPage(pageDto));
     }
 
+    //后台保存用
     @Override
     public JsonResponseDto postPicture(PostPictureInfoDto postPictureInfoDto) {
         int index = iPostPictureInfoMapper.postPicture(postPictureInfoDto);
@@ -60,33 +67,58 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
 
     @Override
     public JsonResponseDto postPictureHasCover(PostPictureInfoDto postPictureInfoDto, CommonsMultipartFile file, HttpServletRequest request) {
-            String fileName=loadFile(file,request,Constants.PICTURE_COVER);
+            String fileName= FileUtil.upLoadFile(file,request,Constants.PICTURE_COVER);
             if(fileName.equals("")){
-                return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
+                return new JsonResponseDto<>(STATUE_FAIL, "发布失败", "");
             }else {
-                postPictureInfoDto.setCover(File.separator + Constants.PICTURE_COVER +  File.separator+loadFile(file,request,Constants.PICTURE_COVER));
+                postPictureInfoDto.setCover(fileName);
                 int index=iPostPictureInfoMapper.postPicture(postPictureInfoDto);
                 if(0>=index){
-                    return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
+                    return new JsonResponseDto<>(STATUE_FAIL, "发布失败", "");
                 }else {
-                    return new JsonResponseDto<>(STATUE_OK, "上传成功", postPictureInfoDto);
+                    return new JsonResponseDto<>(STATUE_OK, "发布成功", postPictureInfoDto);
                 }
             }
     }
 
     @Override
-    public JsonResponseDto deletePostPicture(int postPictureId) {
-        int index = iPostPictureInfoMapper.deletePostPicture(postPictureId);
-        if (0 >= index) {
-            return new JsonResponseDto<>(Constants.STATUE_FAIL, "删除失败", "0");
-        } else {
-            return new JsonResponseDto<>(Constants.STATUE_OK, "删除成功", "1");
+    public JsonResponseDto deletePostPicture(int postPictureId,HttpServletRequest request) {
+        PostPictureInfoDto postPictureInfoDto=iPostPictureInfoMapper.queryPostPictureById(postPictureId);
+        if(null==postPictureInfoDto){
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "删除失败,id错误", "0");
+        }else {
+            //删除封面图片
+            ServletContext servletContext = request.getSession().getServletContext();
+            String path = servletContext.getRealPath(File.separator);   //设定文件保存的目录
+            File file=new File(path+postPictureInfoDto.getCover());
+            if(file.exists()){
+                file.delete();
+            }
+            //删除套图图片
+            List<PictureDto> pictureDtos=iPictureMapper.queryPostPictureByPostId(postPictureId);
+            if(pictureDtos!=null&&pictureDtos.size()>0){
+                for (PictureDto pictureDto : pictureDtos) {
+                    File pictureFile=new File(path+pictureDto.getPictureAddress());
+                    if(pictureFile.exists()){
+                        pictureFile.delete();
+                    }
+                }
+            }
+            int index = iPostPictureInfoMapper.deletePostPicture(postPictureId);
+            if (0 >= index) {
+                return new JsonResponseDto<>(Constants.STATUE_FAIL, "删除失败", "0");
+            } else {
+                return new JsonResponseDto<>(Constants.STATUE_OK, "删除成功", "1");
+            }
         }
+
     }
 
+
+    //后台上传封面用
     @Override
     public JsonResponseDto preUpdateCover(CommonsMultipartFile file, HttpServletRequest request) {
-        String fileName=loadFile(file,request,Constants.PICTURE_COVER);
+        String fileName=FileUtil.upLoadFile(file,request,Constants.PICTURE_COVER);
         if(fileName.equals("")){
             return new JsonResponseDto<>(STATUE_FAIL, "上传失败", "");
         }else {
@@ -94,6 +126,7 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
         }
     }
 
+    //后台修改信息
     @Override
     public JsonResponseDto upDatePostPictureInfo(PostPictureInfoDto postPictureInfoDto) {
         int index = iPostPictureInfoMapper.updatePostPictureInfo(postPictureInfoDto);
@@ -110,56 +143,7 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     }
 
 
-    private String loadFile(CommonsMultipartFile file,HttpServletRequest request,String fileAddress) {
-        String fileName = "";
-        if (null == file) {
-            return fileName;
-        } else {
-            ServletContext servletContext = request.getSession().getServletContext();
-            //上传位置
-            String path = servletContext.getRealPath(File.separator + fileAddress) + File.separator;   //设定文件保存的目录
-            File f = new File(path);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-            if (!file.isEmpty()) {
-                fileName = file.getOriginalFilename();
-                FileOutputStream fos = null;
-                InputStream is = null;
-                try {
-                    fos = new FileOutputStream(path + fileName);
-                    is = file.getInputStream();
-                    byte[] b = new byte[1024 * 1024];
-                    int len;
-                    while ((len = is.read(b)) != -1) {
-                        fos.write(b, 0, len);
-                    }
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    fileName = "";
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    fileName = "";
-                } finally {
-                    if (null != fos) {
-                        try {
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (null != is) {
-                        try {
-                            is.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-        return (File.separator + fileAddress + File.separator+fileName);
-    }
+
 
 }
 

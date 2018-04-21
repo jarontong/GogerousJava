@@ -15,4 +15,6 @@ public interface IPictureMapper {
      List<PictureDto> queryPostPictureByPostId(int postId);
 
      int updatePostPictureInfo(PictureDto PictureDto);
+
+     PictureDto queryById(int pictureId);
 }

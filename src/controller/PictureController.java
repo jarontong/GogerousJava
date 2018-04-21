@@ -29,7 +29,7 @@ public class PictureController {
     }
 
     /**
-     * 更改图片信息
+     * 后台更改图片信息
      * @param pictureDtos
      * @return
      */
@@ -41,14 +41,28 @@ public class PictureController {
 
 
     /**
+     * 客户端更改图片信息
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/post_picture_android", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto updatePictureByAndroid(int postId,@RequestParam(value = "files", required = false) CommonsMultipartFile[] files,HttpServletRequest request){
+        return iPictureService.postPictures(postId,files,request);
+    }
+
+
+
+
+    /**
      * 删除图片
      * @param pictureId
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/delete_picture", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public JsonResponseDto deletePicture(int pictureId){
-        return iPictureService.deletePicture(pictureId);
+    public JsonResponseDto deletePicture(int pictureId,HttpServletRequest request){
+        return iPictureService.deletePicture(pictureId,request);
     }
 
 

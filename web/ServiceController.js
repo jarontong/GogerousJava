@@ -102,6 +102,9 @@ layui.use('upload', function () {
             //上传完毕回调
             layer.msg("上传成功");
             var addPistListLength = $("#pictures tr").length-1;
+            var picturesTableLength=$("#pictures tr").length;
+            alert(addPistListLength+"--"+picturesTableLength)
+
             var btnEdit = '更换';
             var btnDelete = '删除';
             var idTip = '0';
@@ -110,7 +113,7 @@ layui.use('upload', function () {
                 '<td id="picture_id' + addPistListLength + '">' + idTip + '</td>'
                 + '<td>' + '<img id="picture_img' + addPistListLength + '" alt="套图封面" src="' + res.results + '" name="cover" width="100" type="">' + '</td>'
                 + '<td>' + '<input id="picture_sort' + addPistListLength + '" type="text" name="sort"  placeholder=""autocomplete="off" class="layui-input" value="' + 0 + '">' + '</td>'
-                + '<td>' + '<input id="picture_file' + addPistListLength + '" type="file" value="更换" style="margin-right: 10px" onchange="changePicture(this' + "," + addPistListLength + ')">' + '<button type="button" class="layui-btn layui-btn-danger layui-btn-xs  layui-btn-xs" onclick="deleteAddPictureInEdit(' + addPistListLength + ')" >' + btnDelete + '</button>' + '</td>'
+                + '<td>' + '<input id="picture_file' + addPistListLength + '" type="file" value="更换" style="margin-right: 10px" onchange="changePicture(this' + "," + addPistListLength + ')">' + '<button type="button" class="layui-btn layui-btn-danger layui-btn-xs  layui-btn-xs" onclick="deleteAddPictureInEdit(' + picturesTableLength + ')" >' + btnDelete + '</button>' + '</td>'
             $("#pictures").append('<tr>' + tr + '</tr>')
         }
         , error: function () {
@@ -200,7 +203,7 @@ function deleteAddPicture(addId) {
 }
 
 function deleteAddPictureInEdit(addId) {
-    $('#pictures tr:eq('+addId+')').remove();
+    $('#pictures tr:eq('+(addId)+')').remove();
 }
 
 

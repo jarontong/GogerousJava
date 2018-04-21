@@ -23,7 +23,7 @@ public interface IUserInfoService {
 
     JsonResponseDto login(String account, String password, HttpServletRequest request, HttpServletResponse response);
 
-    JsonResponseDto deleteUser(int userId);
+    JsonResponseDto deleteUser(int userId,HttpServletRequest request);
 
     JsonResponseDto updateAvatar(int userId,CommonsMultipartFile file, HttpServletRequest request);
 

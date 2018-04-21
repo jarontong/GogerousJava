@@ -170,8 +170,8 @@ public class UserInfoController {
      */
     @RequestMapping(value = "/delete_user", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public JsonResponseDto  deleteUser(int userId){
-        return iUserInfoService.deleteUser(userId);
+    public JsonResponseDto  deleteUser(int userId,HttpServletRequest request){
+        return iUserInfoService.deleteUser(userId,request);
     }
 
 

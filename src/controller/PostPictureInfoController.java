@@ -103,8 +103,8 @@ public class PostPictureInfoController {
      */
     @RequestMapping(value = "/delete_post_picture_info", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public JsonResponseDto  deleteUser(int postPictureId){
-        return iPostPictureInfoService.deletePostPicture(postPictureId);
+    public JsonResponseDto  deleteUser(int postPictureId,HttpServletRequest request){
+        return iPostPictureInfoService.deletePostPicture(postPictureId,request);
     }
 
 
