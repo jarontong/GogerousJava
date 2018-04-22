@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mapper.ILikeInfoMapper">
+    <insert id="addLike"  parameterType="map"  >
+         insert into like_info(user_id,post_id) values (#{userId},#{postId})
+    </insert>
+
+    <delete id="deleteLike" parameterType="map">
+        DELETE FROM like_info WHERE user_id=#{userId}
+    </delete>
+
+
+    <select id="queryUserLike" parameterType="int" resultType="LikeDto">
+        SELECT  * from like_info where user_id=#{userId}
+    </select>
+</mapper>

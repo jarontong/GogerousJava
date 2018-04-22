@@ -47,7 +47,7 @@ public class PostPictureInfoController {
 
 
     /**
-     * 根据id获取信息
+     * 根据发布id获取信息
      * @param postPictureId
      * @return
      */
@@ -56,6 +56,19 @@ public class PostPictureInfoController {
     public JsonResponseDto getPostPictureById(int postPictureId) {
         return iPostPictureInfoService.queryPostPictureById(postPictureId);
     }
+
+
+    /**
+     * 根据用户id获取信息,可以判断用户是否已喜欢
+     * @param usetId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/get_post_pictrue_by_userId", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto getPostPictureByUserId(int usetId) {
+        return iPostPictureInfoService.queryPostPictureByUserId(usetId);
+    }
+
 
 
     /**
@@ -84,7 +97,7 @@ public class PostPictureInfoController {
 
 
     /**
-     * 更新套图发布信息
+     * 后台更新套图发布信息
      * @param postPictureInfoDto
      * @return
      */
@@ -93,6 +106,19 @@ public class PostPictureInfoController {
     public JsonResponseDto  updatePostPictureInfo(@RequestBody PostPictureInfoDto postPictureInfoDto){
         return iPostPictureInfoService.upDatePostPictureInfo(postPictureInfoDto);
     }
+
+    /**
+     * 更新封面
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/update_post_picture_cover", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public JsonResponseDto  updatePostPictureCover(int postId,@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request ){
+        return iPostPictureInfoService.updatePostPictureCover(postId,file,request);
+    }
+
+
 
 
 
@@ -118,6 +144,18 @@ public class PostPictureInfoController {
     @ResponseBody
     public JsonResponseDto<String> updateAvatar(@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request) {
         return iPostPictureInfoService.preUpdateCover(file,request);
+    }
+
+
+    /**
+     * 增加浏览数
+     * @param postPictureId
+     * @return
+     */
+    @RequestMapping(value = "/add_view_num", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public JsonResponseDto  addViewNum(int postPictureId){
+        return iPostPictureInfoService.addView(postPictureId);
     }
 
 }

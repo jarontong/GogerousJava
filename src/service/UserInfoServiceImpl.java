@@ -188,7 +188,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (null == file) {
             return new JsonResponseDto<>(STATUE_FAIL, "文件为空", "");
         } else {
-            String fileName = FileUtil.upLoadFile(file,request,Constants.USER_AVATAR);
+            String fileName = FileUtil.upLoadFile(file,request,Constants.USER_AVATAR,String.valueOf(userId));
             if(fileName.equals("")){
                 return new JsonResponseDto<>(STATUE_FAIL, "图片上传失败", "");
             }else {
@@ -212,7 +212,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
         if (null == file) {
             return new JsonResponseDto<>(STATUE_FAIL, "文件为空", "");
         } else {
-            String fileName =FileUtil.upLoadFile(file,request,Constants.USER_AVATAR);
+            String fileName =FileUtil.upLoadFile(file,request,Constants.USER_AVATAR,String.valueOf(System.currentTimeMillis()));
             if(fileName.equals("")){
                 return new JsonResponseDto<>(STATUE_FAIL, "图片上传失败", "");
             }else {

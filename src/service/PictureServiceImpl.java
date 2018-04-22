@@ -87,7 +87,7 @@ public class PictureServiceImpl implements IPictureService {
         if (null == file) {
             return new JsonResponseDto<>(0, "文件为空", "");
         } else {
-            String fileName = FileUtil.upLoadFile(file,request,Constants.PICTURES);
+            String fileName = FileUtil.upLoadFile(file,request,Constants.PICTURES,"pictures_"+System.currentTimeMillis());
             if(fileName.equals("")){
                 return new JsonResponseDto<>(STATUE_FAIL, "上传失败","0");
             }else {

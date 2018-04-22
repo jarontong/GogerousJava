@@ -25,4 +25,6 @@ public interface IPostPictureInfoMapper {
      int queryPostPictureCount();
 
      int updatePostPictureInfo(PostPictureInfoDto postPictureInfoDto);
+
+
 }

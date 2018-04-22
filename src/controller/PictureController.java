@@ -41,7 +41,7 @@ public class PictureController {
 
 
     /**
-     * 客户端更改图片信息
+     * 客户端更改或发布图片
      * @param
      * @return
      */

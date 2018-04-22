@@ -50,7 +50,8 @@ public class Test {
 //        postPictureInfoDto.setPostPictureInfoId(3);
 //        postPictureInfoDto.setId(50);
 //        postPictureInfoDto.setSort(100);
-//        iPictureService.updatePostPictureInfo(postPictureInfoDto);
+        System.out.println(  iPostPictureInfoService.queryPostPictureByUserId(53).toString());
+
 
     }
 

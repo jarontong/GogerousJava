@@ -13,6 +13,7 @@ public class PostPictureInfoDto {
     private String account;
     private int postType;
     private String cover;
+    private boolean isLike;
 
     public int getId() {
         return id;
@@ -47,7 +48,6 @@ public class PostPictureInfoDto {
     }
 
 
-
     public boolean isHot() {
         return isHot;
     }
@@ -55,7 +55,6 @@ public class PostPictureInfoDto {
     public void setHot(boolean hot) {
         isHot = hot;
     }
-
 
 
     public String getCover() {
@@ -88,5 +87,29 @@ public class PostPictureInfoDto {
 
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    public boolean isLike() {
+        return isLike;
+    }
+
+    public void setLike(boolean like) {
+        isLike = like;
+    }
+
+    @Override
+    public String toString() {
+        return "PostPictureInfoDto{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", viewNum=" + viewNum +
+                ", likeNum=" + likeNum +
+                ", postTime=" + postTime +
+                ", isHot=" + isHot +
+                ", account='" + account + '\'' +
+                ", postType=" + postType +
+                ", cover='" + cover + '\'' +
+                ", isLike=" + isLike +
+                '}';
     }
 }

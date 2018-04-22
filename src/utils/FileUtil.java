@@ -17,7 +17,7 @@ public class FileUtil {
      * @param fileAddress
      * @return  返回文件地址
      */
-    public static String upLoadFile(CommonsMultipartFile file, HttpServletRequest request, String fileAddress) {
+    public static String upLoadFile(CommonsMultipartFile file, HttpServletRequest request, String fileAddress,String name) {
         String fileName = "";
         if (null == file) {
             return fileName;
@@ -36,7 +36,7 @@ public class FileUtil {
                 String extensionName = fileName
                         .substring(fileName.lastIndexOf(".") + 1);
                 // 新的图片文件名 = 获取时间戳+"."图片扩展名
-                fileName = "test"
+                fileName = name
                         + "." + extensionName;
                 FileOutputStream fos = null;
                 InputStream is = null;
@@ -88,9 +88,10 @@ public class FileUtil {
         if(null==files||0>=files.length){
             return null;
         }else {
-            for (CommonsMultipartFile file : files) {
-                fileAddressList.add(upLoadFile(file,request,fileAddress));
+            for (int i = 0; i < files.length; i++) {
+                fileAddressList.add(upLoadFile(files[i],request,fileAddress,"picture_"+System.currentTimeMillis()));
             }
+
             return fileAddressList;
         }
     }
