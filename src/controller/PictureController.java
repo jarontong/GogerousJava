@@ -68,7 +68,7 @@ public class PictureController {
 
 
     /**
-     * 预发布图片
+     * 后台预添加图片
      * @param file
      * @param request
      * @return

@@ -3,6 +3,7 @@ var maxUserPage; //最大用户列表页数
 var postPictureCont;  //套图发布列表总数
 var maxPostPicturePage; //最大套图发布列表页数
 var pageSize = 10;
+var imageBaseUrl="http://www.chennaicha.club/gogerous";
 
 layui.use('element', function () {
     var element = layui.element();
@@ -18,7 +19,7 @@ layui.use('upload', function () {
         , url: 'user_info/pre_upadate_avatar' //上传接口
         , done: function (res) {
             //上传完毕回调
-            $('#user_edit_avatar').attr("src", res.results);
+            $('#user_edit_avatar').attr("src", imageBaseUrl+res.results);
             layer.msg("上传成功");
         }
         , error: function () {
@@ -37,7 +38,7 @@ layui.use('upload', function () {
         , done: function (res) {
             //上传完毕回调
             if ('200' == res.statueCode) {
-                $('#register_edit_avatar').attr("src", res.results);
+                $('#register_edit_avatar').attr("src", imageBaseUrl+res.results);
                 layer.msg("上传成功");
             } else {
                 layer.msg(res.message);
@@ -61,7 +62,7 @@ layui.use('upload', function () {
         , url: 'post_picture_info/pre_upadate_cover' //上传接口
         , done: function (res) {
             //上传完毕回调
-            $('#post_picture_edit_cover').attr("src", res.results);
+            $('#post_picture_edit_cover').attr("src", imageBaseUrl+res.results);
             layer.msg("上传成功");
         }
         , error: function () {
@@ -81,7 +82,7 @@ layui.use('upload', function () {
         , url: 'post_picture_info/pre_upadate_cover' //上传接口
         , done: function (res) {
             //上传完毕回调
-            $('#post_picture_cover').attr("src", res.results);
+            $('#post_picture_cover').attr("src", imageBaseUrl+res.results);
             layer.msg("上传成功");
         }
         , error: function () {
@@ -103,7 +104,6 @@ layui.use('upload', function () {
             layer.msg("上传成功");
             var addPistListLength = $("#pictures tr").length-1;
             var picturesTableLength=$("#pictures tr").length;
-            alert(addPistListLength+"--"+picturesTableLength)
 
             var btnEdit = '更换';
             var btnDelete = '删除';
@@ -111,7 +111,7 @@ layui.use('upload', function () {
             var tr;
             tr =
                 '<td id="picture_id' + addPistListLength + '">' + idTip + '</td>'
-                + '<td>' + '<img id="picture_img' + addPistListLength + '" alt="套图封面" src="' + res.results + '" name="cover" width="100" type="">' + '</td>'
+                + '<td>' + '<img id="picture_img' + addPistListLength + '" alt="套图封面" src="' + (imageBaseUrl+res.results) + '" name="cover" width="100" type="">' + '</td>'
                 + '<td>' + '<input id="picture_sort' + addPistListLength + '" type="text" name="sort"  placeholder=""autocomplete="off" class="layui-input" value="' + 0 + '">' + '</td>'
                 + '<td>' + '<input id="picture_file' + addPistListLength + '" type="file" value="更换" style="margin-right: 10px" onchange="changePicture(this' + "," + addPistListLength + ')">' + '<button type="button" class="layui-btn layui-btn-danger layui-btn-xs  layui-btn-xs" onclick="deleteAddPictureInEdit(' + picturesTableLength + ')" >' + btnDelete + '</button>' + '</td>'
             $("#pictures").append('<tr>' + tr + '</tr>')
@@ -210,7 +210,7 @@ function deleteAddPictureInEdit(addId) {
 layui.use('form', function () {
     var form = layui.form;
     //监听提交
-    form.on('submit(formDemo)', function (data) {
+    form.on('submit(saveUserInfo)', function (data) {
         var userId = $('#user_edit_id').text();
         var userAvatar = $('#user_edit_avatar').attr('src');
         var nickname = $('#user_edit_nickname').val();
@@ -223,17 +223,15 @@ layui.use('form', function () {
         userInfoDto.gender = sex;
         userInfoDto.sign = sign;
         $.ajax({
-            url: "user_info/update_user_info",
+            url: "user_info/update_user_info_by_admin",
             type: "post",
             data: JSON.stringify(userInfoDto),
             dataType: "json",
             contentType: "application/json;charset=UTF-8",
             success: function (data) {
-                if ("1" == data.results) {
-                    layer.msg("保存成功");
+                layer.msg(data.message);
+                if ("200" == data.statueCode) {
                     setTimeout("showUserList()", 1000);
-                } else {
-                    layer.msg("保存失败" + data.message);
                 }
             }
         })
@@ -380,8 +378,8 @@ function getUserById(userId) {
             $("#user_edit_id").text(data.results.id);
             $("#user_edit_account").text(data.results.account);
             $("#user_edit_nickname").val(data.results.nickname);
-            $('#user_edit_avatar').attr("src", data.results.avatar);
-            $("#user_edit_sgin").val(data.results.sgin);
+            $('#user_edit_avatar').attr("src", imageBaseUrl+data.results.avatar);
+            $("#user_edit_sgin").val(data.results.sign);
             if ('1' == data.results.gender) {
                 $("input[name='sex'][value='1']").prop("checked", true);
                 $("input[name='sex'][value='0']").removeAttr("checked");
@@ -529,7 +527,7 @@ function getPostPictureById(postId) {
             $("#post_picture_edit_id").text(data.results.id);
             $("#post_picture_edit_user_id").text(data.results.userId);
             $("#post_picture_edit_account").text(data.results.account);
-            $('#post_picture_edit_cover').attr("src", data.results.cover);
+            $('#post_picture_edit_cover').attr("src", imageBaseUrl+data.results.cover);
             $("#post_picture_edit_view_num").val(data.results.viewNum);
             $("#post_picture_edit_posttype").val(data.results.postType);
             if (true == data.results.hot) {
@@ -578,7 +576,7 @@ function getPictures(postId) {
                 var tr;
                 tr =
                     '<td id="picture_id' + i + '">' + data.results[i].id + '</td>'
-                    + '<td>' + '<img id="picture_img' + i + '" alt="套图封面" src="' + data.results[i].pictureAddress + '" name="cover" width="100" >' + '</td>'
+                    + '<td>' + '<img id="picture_img' + i + '" alt="套图封面" src="' +(imageBaseUrl+data.results[i].pictureAddress) + '" name="cover" width="100" >' + '</td>'
                     + '<td>' + '<input id="picture_sort' + i + '" type="text" name="sort" lay-verify="required"  required placeholder=""autocomplete="off" class="layui-input" value="' + data.results[i].sort + '">' + '</td>'
                     + '<td>' + '<input id="picture_file' + i + '" type="file" value="更换" style="margin-right: 10px" onchange="changePicture(this' + "," + i + ')">' + '<button type="button" class="layui-btn layui-btn-danger layui-btn-xs  layui-btn-xs" onclick="deletePicture(' + data.results[i].id + "," + postId + ')" >' + btnDelete + '</button>' + '</td>'
                 $("#pictures").append('<tr>' + tr + '</tr>')
@@ -602,7 +600,7 @@ function changePicture(node, imgId) {
         contentType: false,
         success: function (data) {
             if ('200' == data.statueCode) {
-                $('#' + 'picture_img' + imgId).attr('src', data.results);
+                $('#' + 'picture_img' + imgId).attr('src',imageBaseUrl+ data.results);
                 layer.msg("更换成功")
             } else {
                 layer.msg("更换失败")
@@ -762,7 +760,7 @@ layui.use('form', function () {
         var userId = $('#post_picture_edit_user_id').text();
         var cover = $('#post_picture_edit_cover').attr('src');
         var viewNum = $('#post_picture_edit_view_num').val();
-        var ishot = $("input[type='checkbox']").is(':checked') ? true : false;
+        var ishot = $("input[type='checkbox']").is(':checked') ? false : true;
         var postType = $('#post_picture_edit_posttype').val();
         var postPictureDto = {}
         postPictureDto.id = id;
@@ -815,11 +813,9 @@ function updateOrPostPicture(postId) {
             'Content-Type': 'application/json'
         },
         success: function (data) {
+            layer.msg(data.message)
             if ('200' == data.statueCode) {
-                layer.msg(data.message)
                 setTimeout("showPictureList()", 1000);
-            } else {
-                layer.msg(data.message)
             }
         },
         error: function () {

@@ -28,7 +28,7 @@ public class PostPictureInfoController {
     }
 
     /**
-     * 根据页数获取发布列表
+     * 后台根据页数获取发布列表
      * @param page
      * @param size
      * @return
@@ -36,13 +36,30 @@ public class PostPictureInfoController {
     @ResponseBody
     @RequestMapping(value = "/get_post_picture_list_by_page", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public JsonResponseDto getPostPictureListByPage(int page,int size) {
+        return getPostListByPage(page, size, -1);
+    }
+
+
+    /**
+     * 后台根据页数获取发布列表
+     * @param page
+     * @param size
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/get_post_picture_list_by_page_android", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto getPostPictureListByPageAndroid(int page,int size,int userId) {
+        return getPostListByPage(page, size, userId);
+    }
+
+    private JsonResponseDto getPostListByPage(int page, int size, int userId) {
         PageDto pageDto=new PageDto();
         pageDto.setStart((page-1)*size);
         pageDto.setCount(size);
         int total=iPostPictureInfoService.queryPostPictureCount();
         pageDto.caculateLast(total);
         System.out.println("发布图片列表数量为:"+total);
-        return iPostPictureInfoService.queryPostPictureListByPage(pageDto);
+        return iPostPictureInfoService.queryPostPictureListByPage(pageDto,userId);
     }
 
 
@@ -60,13 +77,25 @@ public class PostPictureInfoController {
 
     /**
      * 根据用户id获取信息,可以判断用户是否已喜欢
-     * @param usetId
+     * @param userId
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/get_post_pictrue_by_userId", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public JsonResponseDto getPostPictureByUserId(int usetId) {
-        return iPostPictureInfoService.queryPostPictureByUserId(usetId);
+    public JsonResponseDto getPostPictureByUserId(int userId) {
+        return iPostPictureInfoService.queryPostPictureByUserId(userId);
+    }
+
+
+    /**
+     * 根据类型获取信息,可以判断用户是否已喜欢
+     * @param userId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/get_post_pictrue_by_type", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto getPostPictureByType(int userId,int type) {
+        return iPostPictureInfoService.queryPostPictureByType(userId,type);
     }
 
 
@@ -104,6 +133,7 @@ public class PostPictureInfoController {
     @RequestMapping(value = "/update_post_picture_info", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public JsonResponseDto  updatePostPictureInfo(@RequestBody PostPictureInfoDto postPictureInfoDto){
+        System.out.println("*******************"+postPictureInfoDto.toString());
         return iPostPictureInfoService.upDatePostPictureInfo(postPictureInfoDto);
     }
 
@@ -158,4 +188,14 @@ public class PostPictureInfoController {
         return iPostPictureInfoService.addView(postPictureId);
     }
 
+    /**
+     * 获取用户喜欢的列表
+     * @param userId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/get_post_list_like", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto getPostPictureLike(int userId) {
+        return iPostPictureInfoService.queryPostPictureLike(userId);
+    }
 }

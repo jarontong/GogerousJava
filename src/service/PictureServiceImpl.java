@@ -69,7 +69,8 @@ public class PictureServiceImpl implements IPictureService {
     @Override
     public JsonResponseDto updatePostPictureInfo(List<PictureDto> pictureDtos) {
         if(null==pictureDtos||0>=pictureDtos.size()){
-            return  new JsonResponseDto<>(Constants.STATUE_FAIL,"更新失败,数据为空","");
+            //后台发布图片的时候没有选择添加图片也算是更新成功
+            return  new JsonResponseDto<>(Constants.STATUE_OK,"更新成功","");
         }else {
             for (PictureDto pictureDto : pictureDtos) {
                 int index=iPictureMapper.updatePostPictureInfo(pictureDto);

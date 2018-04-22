@@ -152,6 +152,17 @@ public class UserInfoController {
 
 
     /**
+     * 后台更新用户信息
+     * @param userInfoDto
+     * @return
+     */
+    @RequestMapping(value = "/update_user_info_by_admin", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    @ResponseBody
+    public JsonResponseDto  updateInfoByAdmin(@RequestBody UserInfoDto userInfoDto){
+        return iUserInfoService.updateUserInfo(userInfoDto);
+    }
+
+    /**
      * 删除用户头像
      * @param avatarPath
      * @return

@@ -69,8 +69,56 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     }
 
     @Override
-    public JsonResponseDto queryPostPictureListByPage(PageDto pageDto) {
-        return new JsonResponseDto<>(STATUE_OK, "查询成功", iPostPictureInfoMapper.queryPostPictureListByPage(pageDto));
+    public JsonResponseDto queryPostPictureLike(int userId) {
+        List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostLisLike(userId);
+        if(null==postPictureInfoDtos||0>=postPictureInfoDtos.size()){
+
+        }
+        if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
+        } else {
+            return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
+        }
+    }
+
+    @Override
+    public JsonResponseDto queryPostPictureByType(int userId, int type) {
+        List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostListByType(type);
+        if (0>=userId){
+            List<LikeDto> likeDtos=likeInfoMapper.queryUserLike(userId);
+            for (PostPictureInfoDto postPictureInfoDto : postPictureInfoDtos) {
+                for (LikeDto likeDto : likeDtos) {
+                    if(postPictureInfoDto.getId()==likeDto.getPostId()){
+                        postPictureInfoDto.setLike(true);
+                    }
+                }
+            }
+        }
+        if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
+        } else {
+            return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
+        }
+    }
+
+    @Override
+    public JsonResponseDto queryPostPictureListByPage(PageDto pageDto,int userId) {
+        List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostPictureListByPage(pageDto);
+        if(userId>0){
+            List<LikeDto> likeDtos=likeInfoMapper.queryUserLike(userId);
+            for (PostPictureInfoDto postPictureInfoDto : postPictureInfoDtos) {
+                for (LikeDto likeDto : likeDtos) {
+                    if(postPictureInfoDto.getId()==likeDto.getPostId()){
+                        postPictureInfoDto.setLike(true);
+                    }
+                }
+            }
+        }
+        if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
+        } else {
+            return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
+        }
     }
 
     //后台保存用

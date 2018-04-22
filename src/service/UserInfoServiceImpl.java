@@ -99,10 +99,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public JsonResponseDto registerByAdmin(UserInfoDto userInfoDto) {
         UserInfoDto user = iUserInfoMapper.queryUserByAccount(userInfoDto.getAccount());
+        System.out.println("********************"+userInfoDto.toString());
         if (user != null) {
             return new JsonResponseDto<>(STATUE_FAIL, "注册失败,账号已存在", "");
         } else {
             userInfoDto.setPassword(PasswordSecretUtil.secretPassword(userInfoDto.getPassword()));
+            System.out.println("********************"+userInfoDto.getPassword()+"---------"+PasswordSecretUtil.secretPassword("123456"));
             int index = iUserInfoMapper.register(userInfoDto);
             if (index > 0) {
                 return new JsonResponseDto<>(STATUE_OK, "注册成功", "");
@@ -233,9 +235,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
             userInfoDto.setPassword(PasswordSecretUtil.secretPassword(userInfoDto.getPassword()));
         }
         if (0 >= iUserInfoMapper.updateUserInfo(userInfoDto)) {
-            return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "0");
+            return new JsonResponseDto<>(STATUE_FAIL, "更新失败", "");
         } else {
-            return new JsonResponseDto<>(STATUE_OK, "更新成功", "1");
+            return new JsonResponseDto<>(STATUE_OK, "更新成功", "");
         }
 
     }

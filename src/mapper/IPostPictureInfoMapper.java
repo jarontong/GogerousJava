@@ -18,6 +18,10 @@ public interface IPostPictureInfoMapper {
 
      List<PostPictureInfoDto> queryPostPictureListByUserId(int userId);
 
+     List<PostPictureInfoDto> queryPostListByType(int type);
+
+     List<PostPictureInfoDto> queryPostLisLike(int userId);
+
      PostPictureInfoDto queryPostPictureById(int postPictureId);
 
      List<PostPictureInfoDto> queryPostPictureListByPage(PageDto pageDto);

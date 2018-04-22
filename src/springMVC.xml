@@ -59,6 +59,10 @@
             <mvc:exclude-mapping path="/app_info/update_app_info"/>
             <mvc:exclude-mapping path="/app_info/get_update_app_info"/>
             <mvc:exclude-mapping path="/ServiceLogin.html"/>
+            <mvc:exclude-mapping path="/layui/**"/>
+            <mvc:exclude-mapping path="/jquery.min.js"/>
+            <mvc:exclude-mapping path="/jquery.md5.js"/>
+            <mvc:exclude-mapping path="/ServiceController.js"/>
             <bean class="utils.LoginInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>

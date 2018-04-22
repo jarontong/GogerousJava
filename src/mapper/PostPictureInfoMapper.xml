@@ -21,6 +21,14 @@
         select * from   post_picture_info WHERE  post_picture_info.user_id=#{userId}
     </select>
 
+    <select id="queryPostListByType" resultType="PostPictureInfoDto">
+        select * from   post_picture_info WHERE  post_picture_info.post_type=#{type}
+    </select>
+
+    <select id="queryPostLisLike" resultType="PostPictureInfoDto">
+      select * FROM post_picture_info WHERE  id in (SELECT post_id from like_info WHERE user_id=#{userId})
+    </select>
+
     <select id="queryPostPictureListByPage" resultType="PostPictureInfoDto">
         (select a.id,a.view_num,a.like_num,a.post_time,a.post_type,a.is_hot,a.user_id,a.cover,user_info.account from  post_picture_info as a inner join user_info on a.user_id=user_info.id) ORDER BY is_hot DESC,post_time DESC
         <if test="start!=null and count!=null">
