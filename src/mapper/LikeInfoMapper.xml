@@ -12,6 +12,10 @@
         DELETE FROM like_info WHERE user_id=#{userId}
     </delete>
 
+    <select id="queryIsLike" parameterType="map">
+        select FROM like_info WHERE user_id=#{userId} AND post_id=#{postId}
+    </select>
+
 
     <select id="queryUserLike" parameterType="int" resultType="LikeDto">
         SELECT  * from like_info where user_id=#{userId}

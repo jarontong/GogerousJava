@@ -122,7 +122,7 @@ public class UserInfoController {
      */
     @RequestMapping(value = "/upadate_avatar", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public JsonResponseDto updateAvatar(int userId,@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request) {
+    public JsonResponseDto updateAvatar(int userId,@RequestParam(value = "avatarFile", required = false) CommonsMultipartFile file, HttpServletRequest request) {
        return iUserInfoService.updateAvatar(userId,file,request);
     }
 

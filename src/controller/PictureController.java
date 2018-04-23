@@ -47,7 +47,7 @@ public class PictureController {
      */
     @ResponseBody
     @RequestMapping(value = "/post_picture_android", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public JsonResponseDto updatePictureByAndroid(int postId,@RequestParam(value = "files", required = false) CommonsMultipartFile[] files,HttpServletRequest request){
+    public JsonResponseDto updatePictureByAndroid(int postId,@RequestParam(value = "pictures", required = false) CommonsMultipartFile[] files,HttpServletRequest request){
         return iPictureService.postPictures(postId,files,request);
     }
 

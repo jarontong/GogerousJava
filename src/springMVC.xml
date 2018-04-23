@@ -51,6 +51,7 @@
         <mvc:interceptor>
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/user_info/admin_login"/>
+            <mvc:exclude-mapping path="/user_info/admin_login"/>
             <mvc:exclude-mapping path="/user_info/register"/>
             <mvc:exclude-mapping path="/user_info/register_by_admin"/>
             <mvc:exclude-mapping path="/user_info/login"/>
@@ -58,6 +59,7 @@
             <mvc:exclude-mapping path="/user_info/get_code"/>
             <mvc:exclude-mapping path="/app_info/update_app_info"/>
             <mvc:exclude-mapping path="/app_info/get_update_app_info"/>
+            <mvc:exclude-mapping path="/post_picture_info/get_post_picture_list"/>
             <mvc:exclude-mapping path="/ServiceLogin.html"/>
             <mvc:exclude-mapping path="/layui/**"/>
             <mvc:exclude-mapping path="/jquery.min.js"/>

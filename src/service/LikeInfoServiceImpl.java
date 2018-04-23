@@ -1,6 +1,7 @@
 package service;
 
 import dto.JsonResponseDto;
+import dto.LikeDto;
 import dto.PostPictureInfoDto;
 import mapper.ILikeInfoMapper;
 import mapper.IPostPictureInfoMapper;
@@ -27,16 +28,20 @@ public class LikeInfoServiceImpl implements ILikeInfoService{
         Map<String,Integer> map=new HashMap<>();
         map.put("userId",userId);
         map.put("postId",postId);
-        int index=iLikeInfoMapper.addLike(map);
-        if(0>=index){
-            return new JsonResponseDto<>(Constants.STATUE_FAIL,"添加喜欢失败","");
+        LikeDto likeDto=iLikeInfoMapper.queryIsLike(map);
+        if(null==likeDto){
+            int index=iLikeInfoMapper.addLike(map);
+            if(0>=index){
+                return new JsonResponseDto<>(Constants.STATUE_FAIL,"添加喜欢失败","");
+            }else {
+                PostPictureInfoDto postPictureInfoDto=iPostPictureInfoMapper.queryPostPictureById(postId);
+                postPictureInfoDto.setLikeNum(postPictureInfoDto.getLikeNum()+1);
+                iPostPictureInfoMapper.updatePostPictureInfo(postPictureInfoDto);
+                return new JsonResponseDto<>(Constants.STATUE_OK,"添加喜欢成功","");
+            }
         }else {
-            PostPictureInfoDto postPictureInfoDto=iPostPictureInfoMapper.queryPostPictureById(postId);
-            postPictureInfoDto.setLikeNum(postPictureInfoDto.getLikeNum()+1);
-            iPostPictureInfoMapper.updatePostPictureInfo(postPictureInfoDto);
-            return new JsonResponseDto<>(Constants.STATUE_OK,"添加喜欢成功","");
+            return new JsonResponseDto<>(Constants.STATUE_FAIL,"添加失败，已经添加过","");
         }
-
     }
 
     @Override

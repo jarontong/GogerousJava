@@ -11,5 +11,7 @@ public interface ILikeInfoMapper {
 
     int deleteLike(Map<String,Integer> map);
 
+    LikeDto queryIsLike(Map<String,Integer> map);
+
     List<LikeDto> queryUserLike(int userId);
 }

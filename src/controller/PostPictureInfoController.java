@@ -81,8 +81,8 @@ public class PostPictureInfoController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/get_post_pictrue_by_userId", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public JsonResponseDto getPostPictureByUserId(int userId) {
+    @RequestMapping(value = "/get_post_pictrue_list_android", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto getPostPicture(int userId) {
         return iPostPictureInfoService.queryPostPictureByUserId(userId);
     }
 
@@ -118,7 +118,7 @@ public class PostPictureInfoController {
      */
     @ResponseBody
     @RequestMapping(value = "/post_has_file", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public JsonResponseDto postPictureHasFile( PostPictureInfoDto postPictureInfoDto,@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request) {
+    public JsonResponseDto postPictureHasFile( PostPictureInfoDto postPictureInfoDto,@RequestParam(value = "coverFile", required = false) CommonsMultipartFile file, HttpServletRequest request) {
         return iPostPictureInfoService.postPictureHasCover(postPictureInfoDto,file,request);
     }
 
@@ -144,7 +144,7 @@ public class PostPictureInfoController {
      */
     @RequestMapping(value = "/update_post_picture_cover", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ResponseBody
-    public JsonResponseDto  updatePostPictureCover(int postId,@RequestParam(value = "file", required = false) CommonsMultipartFile file, HttpServletRequest request ){
+    public JsonResponseDto  updatePostPictureCover(int postId,@RequestParam(value = "coverFile", required = false) CommonsMultipartFile file, HttpServletRequest request ){
         return iPostPictureInfoService.updatePostPictureCover(postId,file,request);
     }
 
@@ -165,7 +165,7 @@ public class PostPictureInfoController {
 
 
     /**
-     * 预更新套图封面
+     * 后台预更新套图封面
      * @param file
      * @param request
      * @return
@@ -197,5 +197,17 @@ public class PostPictureInfoController {
     @RequestMapping(value = "/get_post_list_like", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public JsonResponseDto getPostPictureLike(int userId) {
         return iPostPictureInfoService.queryPostPictureLike(userId);
+    }
+
+
+    /**
+     * 获取用户自身发布的列表
+     * @param userId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/get_user_post", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public JsonResponseDto getUserPost(int userId) {
+        return iPostPictureInfoService.queryUserPost(userId);
     }
 }

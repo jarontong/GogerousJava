@@ -15,6 +15,8 @@ public interface IPostPictureInfoService {
 
     JsonResponseDto queryPostPictureByUserId(int userId);
 
+    JsonResponseDto queryUserPost(int userId);
+
     JsonResponseDto queryPostPictureLike(int userId);
 
     JsonResponseDto queryPostPictureByType(int userId,int type);

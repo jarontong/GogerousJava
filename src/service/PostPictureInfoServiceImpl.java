@@ -53,30 +53,34 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     @Override
     public JsonResponseDto queryPostPictureByUserId(int userId) {
         List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostPictureList();
-        List<LikeDto> likeDtos=likeInfoMapper.queryUserLike(userId);
-        for (PostPictureInfoDto postPictureInfoDto : postPictureInfoDtos) {
-            for (LikeDto likeDto : likeDtos) {
-                if(postPictureInfoDto.getId()==likeDto.getPostId()){
-                    postPictureInfoDto.setLike(true);
-                }
-            }
-        }
         if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
             return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
         } else {
+            isLikePost(userId, postPictureInfoDtos);
             return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
         }
     }
 
     @Override
+    public JsonResponseDto queryUserPost(int userId) {
+        List<PostPictureInfoDto>  postPictureInfoDtos=iPostPictureInfoMapper.queryPostPictureListByUserId(userId);
+        if(null==postPictureInfoDtos||0>=postPictureInfoDtos.size()){
+            return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
+        }else {
+            isLikePost(userId, postPictureInfoDtos);
+            return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
+        }
+    }
+
+
+
+    @Override
     public JsonResponseDto queryPostPictureLike(int userId) {
         List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostLisLike(userId);
-        if(null==postPictureInfoDtos||0>=postPictureInfoDtos.size()){
-
-        }
         if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
             return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
         } else {
+            isLikePost(userId,postPictureInfoDtos);
             return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
         }
     }
@@ -84,19 +88,10 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     @Override
     public JsonResponseDto queryPostPictureByType(int userId, int type) {
         List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostListByType(type);
-        if (0>=userId){
-            List<LikeDto> likeDtos=likeInfoMapper.queryUserLike(userId);
-            for (PostPictureInfoDto postPictureInfoDto : postPictureInfoDtos) {
-                for (LikeDto likeDto : likeDtos) {
-                    if(postPictureInfoDto.getId()==likeDto.getPostId()){
-                        postPictureInfoDto.setLike(true);
-                    }
-                }
-            }
-        }
         if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
             return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
         } else {
+            isLikePost(userId,postPictureInfoDtos);
             return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
         }
     }
@@ -104,19 +99,10 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
     @Override
     public JsonResponseDto queryPostPictureListByPage(PageDto pageDto,int userId) {
         List<PostPictureInfoDto> postPictureInfoDtos=iPostPictureInfoMapper.queryPostPictureListByPage(pageDto);
-        if(userId>0){
-            List<LikeDto> likeDtos=likeInfoMapper.queryUserLike(userId);
-            for (PostPictureInfoDto postPictureInfoDto : postPictureInfoDtos) {
-                for (LikeDto likeDto : likeDtos) {
-                    if(postPictureInfoDto.getId()==likeDto.getPostId()){
-                        postPictureInfoDto.setLike(true);
-                    }
-                }
-            }
-        }
         if (null == postPictureInfoDtos || 0 > postPictureInfoDtos.size()) {
             return new JsonResponseDto<>(Constants.STATUE_FAIL, "列表为空", "");
         } else {
+            isLikePost(userId,postPictureInfoDtos);
             return new JsonResponseDto<>(Constants.STATUE_OK, "获取列表成功", postPictureInfoDtos);
         }
     }
@@ -244,8 +230,19 @@ public class PostPictureInfoServiceImpl implements IPostPictureInfoService {
         return iPostPictureInfoMapper.queryPostPictureCount();
     }
 
-
-
+    //判断用户是否点赞
+    private void isLikePost(int userId, List<PostPictureInfoDto> postPictureInfoDtos) {
+        List<LikeDto> likeDtos=likeInfoMapper.queryUserLike(userId);
+        if(null!=likeDtos&&0<likeDtos.size()){
+            for (PostPictureInfoDto postPictureInfoDto : postPictureInfoDtos) {
+                for (LikeDto likeDto : likeDtos) {
+                    if(postPictureInfoDto.getId()==likeDto.getPostId()){
+                        postPictureInfoDto.setLike(true);
+                    }
+                }
+            }
+        }
+    }
 
 }
 
